@@ -1,0 +1,108 @@
+"use client";
+
+import Image from "next/image";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { donation } from "@/lib/data";
+import { Target, Eye, ArrowRight } from "lucide-react";
+
+export function MissionVision() {
+  return (
+    <section className="py-24 bg-hbf-cream overflow-hidden">
+      <div className="container mx-auto px-4">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          
+          {/* Texte à gauche */}
+          <div className="order-2 lg:order-1">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+            >
+              <h2 className="text-hbf-orange font-bold tracking-[0.3em] uppercase text-sm mb-4">
+                Haiti Bright Futures
+              </h2>
+              <h3 className="text-4xl md:text-6xl font-bold mb-8 text-hbf-dark leading-tight font-[family-name:var(--font-patrick-hand)]">
+                Building Brighter Futures For Haitian Youth
+              </h3>
+
+              <div className="space-y-10 mb-10">
+                <div className="flex gap-6">
+                  <div className="flex-shrink-0 w-12 h-12 bg-hbf-green/10 text-hbf-green rounded-xl flex items-center justify-center">
+                    <Target size={24} />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold text-hbf-dark mb-2">Mission</h4>
+                    <p className="text-hbf-muted leading-relaxed">
+                      Creating opportunities for students in Haiti through scholarships, sports, and youth programs to help them pursue their aspirations and transform the future of the country.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-6">
+                  <div className="flex-shrink-0 w-12 h-12 bg-hbf-orange/10 text-hbf-orange rounded-xl flex items-center justify-center">
+                    <Eye size={24} />
+                  </div>
+                  <div>
+                    <h4 className="text-xl font-bold text-hbf-dark mb-2">Vision</h4>
+                    <p className="text-hbf-muted leading-relaxed">
+                      Help transform the future of the country by helping future leaders pursue their aspirations.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-4">
+                <Button asChild className="h-14 px-8 bg-hbf-orange hover:bg-hbf-orange-light text-white font-bold rounded-xl shadow-lg transition-all hover:scale-105">
+                  <a href={donation.href} target="_blank" rel="noreferrer">
+                    Donate Now
+                  </a>
+                </Button>
+                <Button asChild variant="outline" className="h-14 px-8 border-2 border-hbf-green text-hbf-green font-bold rounded-xl hover:bg-hbf-green hover:text-white transition-all hover:scale-105">
+                  <Link href="/scholarship-application">
+                    Apply Now
+                    <ArrowRight className="ml-2" size={20} />
+                  </Link>
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Photos à droite - Design Collage "Dope" */}
+          <div className="relative order-1 lg:order-2 h-[500px] md:h-[600px]">
+            <motion.div 
+              initial={{ opacity: 0, x: 50, rotate: 5 }}
+              whileInView={{ opacity: 1, x: 0, rotate: -2 }}
+              viewport={{ once: true }}
+              className="absolute top-0 right-0 w-4/5 aspect-[4/5] rounded-[40px] overflow-hidden shadow-2xl z-10 border-8 border-white"
+            >
+              <Image
+                src="/images/JOA03692.jpg"
+                alt="Haiti Bright Futures students"
+                fill
+                className="object-cover"
+              />
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0, x: -50, rotate: -5 }}
+              whileInView={{ opacity: 1, x: 0, rotate: 3 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="absolute bottom-0 left-0 w-3/4 aspect-[4/5] rounded-[40px] overflow-hidden shadow-2xl z-0 border-8 border-white"
+            >
+              <Image
+                src="/images/JOA03764.jpg"
+                alt="Haiti Bright Futures activity"
+                fill
+                className="object-cover"
+              />
+            </motion.div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+}
