@@ -1,85 +1,113 @@
+"use client";
+
+import { useState } from "react";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
-import { Contact as ContactSection } from "@/components/sections/Contact";
-import { Mail, MessageCircle, MapPin, Clock } from "lucide-react";
-import { contact } from "@/lib/data";
-
-export const metadata = {
-  title: "Contact Us | Haiti Bright Futures",
-  description: "Get in touch with Haiti Bright Futures. We welcome questions from families, partners, and donors.",
-};
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { submitContactForm } from "@/lib/actions/contact";
+import { CheckCircle2, Loader2 } from "lucide-react";
 
 export default function ContactPage() {
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus("loading");
+    setErrorMsg("");
+
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      name: formData.get("name") as string,
+      email: formData.get("email") as string,
+      subject: formData.get("subject") as string,
+      message: formData.get("message") as string,
+    };
+
+    const result = await submitContactForm(data);
+    
+    if (result.success) {
+      setStatus("success");
+    } else {
+      setStatus("error");
+      setErrorMsg(result.error || "An error occurred.");
+    }
+  }
+
   return (
-    <main className="min-h-screen bg-white">
+    <>
       <Navbar />
-      
-      {/* Header Section */}
-      <section className="pt-32 pb-16 bg-hbf-cream">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.1em] text-hbf-orange">Get in touch</p>
-          <h1 className="mt-4 text-4xl md:text-5xl font-bold text-hbf-dark">
-            Contact Us <span className="text-hbf-green">Today</span>
-          </h1>
-          <p className="mt-6 max-w-3xl mx-auto text-lg text-hbf-muted">
-            Whether you have questions about our programs, want to learn how you can get involved, or need more information about our initiatives, we&apos;re here to help. Reach out to us using the contact details below or fill out the contact form, and we&apos;ll get back to you as soon as possible.
-          </p>
-        </div>
-      </section>
+      <main className="pt-32 pb-20 bg-hbf-cream min-h-screen">
+        <div className="container mx-auto px-4 max-w-2xl">
+          <div className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-soft border border-hbf-green/5">
+            <h1 className="text-4xl font-bold text-hbf-dark font-[family-name:var(--font-patrick-hand)] mb-4">
+              Get in Touch
+            </h1>
+            <p className="text-hbf-muted mb-8">
+              Fill out the form below and your message will be sent directly to our team.
+            </p>
 
-      {/* Info Cards Section */}
-      <section className="py-20 -mt-10 relative z-10">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            {/* Email */}
-            <a href={`mailto:${contact.email}`} className="group bg-white p-8 rounded-3xl shadow-soft border border-hbf-green/5 hover:border-hbf-green transition-all hover:-translate-y-1">
-              <div className="size-12 rounded-2xl bg-hbf-green/10 flex items-center justify-center mb-6 group-hover:bg-hbf-green group-hover:text-white transition-colors">
-                <Mail className="size-6 text-hbf-green" />
+            {status === "success" ? (
+              <div className="bg-green-50 text-hbf-green p-8 rounded-3xl text-center border border-green-100">
+                <CheckCircle2 className="mx-auto mb-4 w-12 h-12" />
+                <h2 className="text-2xl font-bold mb-2">Message Sent!</h2>
+                <p>Thank you for reaching out. We will get back to you soon.</p>
+                <Button 
+                  onClick={() => setStatus("idle")} 
+                  className="mt-6 bg-hbf-green hover:bg-hbf-green-light"
+                >
+                  Send another message
+                </Button>
               </div>
-              <h3 className="text-xl font-bold text-hbf-dark mb-2">Email Us</h3>
-              <p className="text-hbf-muted text-sm mb-4">Our team is here to help you.</p>
-              <span className="text-hbf-green font-semibold text-sm break-all">{contact.email}</span>
-            </a>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-hbf-dark ml-1">Name</label>
+                    <Input name="name" placeholder="Your name" required className="rounded-xl border-hbf-green/10" />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-hbf-dark ml-1">Email</label>
+                    <Input name="email" type="email" placeholder="email@example.com" required className="rounded-xl border-hbf-green/10" />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-hbf-dark ml-1">Subject</label>
+                  <Input name="subject" placeholder="What is this about?" required className="rounded-xl border-hbf-green/10" />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-hbf-dark ml-1">Message</label>
+                  <Textarea name="message" placeholder="Your message here..." required className="rounded-xl border-hbf-green/10 min-h-[150px]" />
+                </div>
+                
+                {status === "error" && (
+                  <p className="text-red-500 text-sm bg-red-50 p-3 rounded-lg border border-red-100">
+                    {errorMsg}
+                  </p>
+                )}
 
-            {/* WhatsApp */}
-            <a href={contact.whatsappUrl} target="_blank" rel="noreferrer" className="group bg-white p-8 rounded-3xl shadow-soft border border-hbf-green/5 hover:border-hbf-green transition-all hover:-translate-y-1">
-              <div className="size-12 rounded-2xl bg-hbf-green/10 flex items-center justify-center mb-6 group-hover:bg-hbf-green group-hover:text-white transition-colors">
-                <MessageCircle className="size-6 text-hbf-green" />
-              </div>
-              <h3 className="text-xl font-bold text-hbf-dark mb-2">WhatsApp</h3>
-              <p className="text-hbf-muted text-sm mb-4">Fastest way to reach us.</p>
-              <span className="text-hbf-green font-semibold text-sm">{contact.whatsapp}</span>
-            </a>
-
-            {/* Location */}
-            <div className="bg-white p-8 rounded-3xl shadow-soft border border-hbf-green/5">
-              <div className="size-12 rounded-2xl bg-hbf-green/10 flex items-center justify-center mb-6">
-                <MapPin className="size-6 text-hbf-green" />
-              </div>
-              <h3 className="text-xl font-bold text-hbf-dark mb-2">Location</h3>
-              <p className="text-hbf-muted text-sm mb-1">Cap-Haïtien, Haiti</p>
-              <p className="text-hbf-muted text-sm">Miami, FL, USA</p>
-            </div>
-
-            {/* Hours */}
-            <div className="bg-white p-8 rounded-3xl shadow-soft border border-hbf-green/5">
-              <div className="size-12 rounded-2xl bg-hbf-green/10 flex items-center justify-center mb-6">
-                <Clock className="size-6 text-hbf-green" />
-              </div>
-              <h3 className="text-xl font-bold text-hbf-dark mb-2">Office Hours</h3>
-              <p className="text-hbf-muted text-sm mb-1">Mon - Fri: 9am - 5pm</p>
-              <p className="text-hbf-muted text-sm">Sat: 10am - 2pm</p>
-            </div>
+                <Button 
+                  type="submit" 
+                  disabled={status === "loading"}
+                  className="w-full h-14 rounded-xl bg-hbf-green hover:bg-hbf-green-light text-white font-bold text-lg"
+                >
+                  {status === "loading" ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Sending...
+                    </>
+                  ) : (
+                    "Send Message"
+                  )}
+                </Button>
+              </form>
+            )}
           </div>
         </div>
-      </section>
-
-      {/* Re-use existing Contact section for the main CTA area */}
-      <div className="pb-24">
-        <ContactSection />
-      </div>
-
+      </main>
       <Footer />
-    </main>
+    </>
   );
 }

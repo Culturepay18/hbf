@@ -5,6 +5,8 @@ import { Resend } from "resend";
 import { z } from "zod";
 import { ApplicationConfirmationEmail } from "@/components/emails/ApplicationConfirmation";
 
+import { getGoogleConfig } from "@/lib/google-config";
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 const schema = z.object({
@@ -24,11 +26,13 @@ export async function submitApplication(formData: z.infer<typeof schema>) {
     const applicationId = Math.random().toString(36).substring(7).toUpperCase();
 
     // 2. Google Sheets
-    if (process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL && process.env.GOOGLE_PRIVATE_KEY && process.env.GOOGLE_SHEET_ID) {
+    const googleConfig = getGoogleConfig();
+
+    if (process.env.GOOGLE_SHEET_ID && googleConfig) {
       const auth = new google.auth.GoogleAuth({
         credentials: {
-          client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-          private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+          client_email: googleConfig.client_email,
+          private_key: googleConfig.private_key,
         },
         scopes: ["https://www.googleapis.com/auth/spreadsheets"],
       });
