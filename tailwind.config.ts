@@ -15,6 +15,8 @@ const config: Config = {
           orange: "#F57C00",
           "orange-light": "#FF9800",
           brown: "#5D4037",
+          gold: "#D4AF37",
+          "gold-light": "#F9A602",
           cream: "#FFF8F1",
           dark: "#1A1A1A",
         },

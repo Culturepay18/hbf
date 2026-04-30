@@ -136,38 +136,23 @@ export const team: TeamMember[] = [
 ];
 
 export const impactStats = [
-  { value: "10", label: "Schools" },
+  { value: "36", label: "Applicants" },
   { value: "20", label: "Finalists" },
-  { value: "5", label: "Winners" },
-  { value: "$1,000", label: "School prize" },
+  { value: "4", label: "Teams" },
+  { value: "1", label: "National competition" },
 ];
 
-export const blogPosts: BlogPost[] = [
-  {
-    title: "The Heartbeat of Haiti: The Importance of Sports in Haitian Culture",
-    href: "https://hbfhaiti.org/from-dreams-to-reality-success-stories-of-high-school-scholarship-recipients/",
-    excerpt:
-      "Sports represent more than games in Haiti. Soccer, traditional games, and youth programs embody pride, community, and hope.",
-  },
-  {
-    title: "The Culture Key: Haitian Music and Rhythm",
-    href: "https://hbfhaiti.org/navigating-the-application-process-tips-for-securing-a-high-school-scholarship-in-haiti/",
-    excerpt:
-      "Kompa, Rara, and Haitian rhythms tell the story of a vibrant culture that continues to influence the Caribbean and the diaspora.",
-  },
-  {
-    title: "Unlocking Opportunities: How High School Scholarships Empower Haiti's Youth",
-    href: "https://hbfhaiti.org/unlocking-opportunities-how-high-school-scholarships-empower-haitis-youth/",
-    excerpt:
-      "Scholarships reduce financial barriers, promote academic excellence, and open doors to further education and careers.",
-  },
+export const socialLinks = [
+  { label: "Instagram", href: "https://www.instagram.com/hbfhaiti/", platform: "instagram" },
+  { label: "WhatsApp", href: "https://wa.me/19542744509", platform: "whatsapp" },
 ];
 
 export const navLinks = [
   { label: "Home", href: "/" },
+  { label: "How It Works", href: "/how-it-works" },
+  { label: "Innovation Lab", href: "/innovation-lab" },
   { label: "About us", href: "/about" },
   { label: "Scholarships", href: "/scholarships" },
   { label: "Team", href: "/team" },
-  { label: "Blog", href: "/#blog" },
   { label: "Contact us", href: "/contact" },
 ];

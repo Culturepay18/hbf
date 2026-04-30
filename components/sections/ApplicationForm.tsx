@@ -10,13 +10,13 @@ import { submitApplication } from "@/lib/actions/submit-application";
 import { Button } from "@/components/ui/button";
 
 const schema = z.object({
-  firstName: z.string().min(2, "Le prénom est requis"),
-  lastName: z.string().min(2, "Le nom est requis"),
-  email: z.string().email("Email invalide"),
-  phone: z.string().min(8, "Numéro de téléphone invalide"),
-  school: z.string().min(2, "Le nom de l'école est requis"),
-  grade: z.string().min(1, "La classe est requise"),
-  message: z.string().optional(),
+  firstName: z.string().min(2, "First name is required"),
+  lastName: z.string().min(2, "Last name is required"),
+  email: z.string().email("Invalid email address"),
+  phone: z.string().min(8, "Invalid phone number"),
+  school: z.string().min(2, "School name is required"),
+  grade: z.string().min(1, "Grade is required"),
+  message: z.string().min(10, "Please share a bit more about your motivations (at least 10 characters)"),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -44,10 +44,10 @@ export function ApplicationForm() {
         setIsSuccess(true);
         reset();
       } else {
-        setError(result.error || "Une erreur est survenue.");
+        setError(result.error || "An error occurred. Please try again.");
       }
     } catch (err) {
-      setError("Une erreur inattendue est survenue.");
+      setError("An unexpected error occurred.");
     } finally {
       setIsSubmitting(false);
     }
@@ -64,13 +64,13 @@ export function ApplicationForm() {
           <CheckCircle2 size={48} />
         </div>
         <div className="space-y-2">
-          <h2 className="text-3xl font-bold text-hbf-dark">Demande reçue !</h2>
+          <h2 className="text-3xl font-bold text-hbf-dark">Application Received!</h2>
           <p className="max-w-md text-hbf-muted mx-auto">
-            Merci pour votre candidature. Un email de confirmation vient de vous être envoyé. Notre équipe examinera votre dossier avec attention.
+            Thank you for your application. A confirmation email has been sent to your inbox. Our team will review your file with care.
           </p>
         </div>
         <Button onClick={() => setIsSuccess(false)} variant="ghost" className="text-hbf-green hover:bg-hbf-green/5 font-semibold">
-          Soumettre une autre demande
+          Submit another application
         </Button>
       </motion.div>
     );
@@ -81,20 +81,20 @@ export function ApplicationForm() {
       <form onSubmit={handleSubmit(onSubmit)} className="grid gap-8 rounded-[2.5rem] bg-white p-8 shadow-soft sm:p-12 border border-hbf-green/5">
         <div className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-sm font-bold text-hbf-dark ml-1">Prénom</label>
+            <label className="text-sm font-bold text-hbf-dark ml-1">First Name</label>
             <input
               {...register("firstName")}
               className={`w-full rounded-2xl border bg-hbf-cream/30 p-4 outline-none transition-all focus:ring-2 focus:ring-hbf-green/20 focus:bg-white ${errors.firstName ? "border-red-400 bg-red-50/30" : "border-hbf-green/10 focus:border-hbf-green"}`}
-              placeholder="Ex: Jean"
+              placeholder="e.g., Jean"
             />
             {errors.firstName && <p className="text-xs font-medium text-red-500 ml-1">{errors.firstName.message}</p>}
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-bold text-hbf-dark ml-1">Nom</label>
+            <label className="text-sm font-bold text-hbf-dark ml-1">Last Name</label>
             <input
               {...register("lastName")}
               className={`w-full rounded-2xl border bg-hbf-cream/30 p-4 outline-none transition-all focus:ring-2 focus:ring-hbf-green/20 focus:bg-white ${errors.lastName ? "border-red-400 bg-red-50/30" : "border-hbf-green/10 focus:border-hbf-green"}`}
-              placeholder="Ex: Dupont"
+              placeholder="e.g., Dupont"
             />
             {errors.lastName && <p className="text-xs font-medium text-red-500 ml-1">{errors.lastName.message}</p>}
           </div>
@@ -112,7 +112,7 @@ export function ApplicationForm() {
             {errors.email && <p className="text-xs font-medium text-red-500 ml-1">{errors.email.message}</p>}
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-bold text-hbf-dark ml-1">Téléphone</label>
+            <label className="text-sm font-bold text-hbf-dark ml-1">Phone</label>
             <input
               {...register("phone")}
               className={`w-full rounded-2xl border bg-hbf-cream/30 p-4 outline-none transition-all focus:ring-2 focus:ring-hbf-green/20 focus:bg-white ${errors.phone ? "border-red-400 bg-red-50/30" : "border-hbf-green/10 focus:border-hbf-green"}`}
@@ -124,40 +124,41 @@ export function ApplicationForm() {
 
         <div className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2">
-            <label className="text-sm font-bold text-hbf-dark ml-1">École actuelle</label>
+            <label className="text-sm font-bold text-hbf-dark ml-1">Current School</label>
             <input
               {...register("school")}
               className={`w-full rounded-2xl border bg-hbf-cream/30 p-4 outline-none transition-all focus:ring-2 focus:ring-hbf-green/20 focus:bg-white ${errors.school ? "border-red-400 bg-red-50/30" : "border-hbf-green/10 focus:border-hbf-green"}`}
-              placeholder="Nom de votre établissement"
+              placeholder="Name of your institution"
             />
             {errors.school && <p className="text-xs font-medium text-red-500 ml-1">{errors.school.message}</p>}
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-bold text-hbf-dark ml-1">Classe</label>
+            <label className="text-sm font-bold text-hbf-dark ml-1">Grade</label>
             <select
               {...register("grade")}
               className={`w-full rounded-2xl border bg-hbf-cream/30 p-4 outline-none transition-all focus:ring-2 focus:ring-hbf-green/20 focus:bg-white appearance-none ${errors.grade ? "border-red-400 bg-red-50/30" : "border-hbf-green/10 focus:border-hbf-green"}`}
             >
-              <option value="">Sélectionnez votre classe</option>
+              <option value="">Select your grade</option>
               <option value="NS1">NS1</option>
               <option value="NS2">NS2</option>
               <option value="NS3">NS3</option>
               <option value="Rheto">Rheto</option>
               <option value="Philo">Philo</option>
-              <option value="Autre">Autre</option>
+              <option value="Other">Other</option>
             </select>
             {errors.grade && <p className="text-xs font-medium text-red-500 ml-1">{errors.grade.message}</p>}
           </div>
         </div>
 
         <div className="space-y-2">
-          <label className="text-sm font-bold text-hbf-dark ml-1">Message (Optionnel)</label>
+          <label className="text-sm font-bold text-hbf-dark ml-1">Motivation Message</label>
           <textarea
             {...register("message")}
             rows={4}
-            className="w-full rounded-2xl border border-hbf-green/10 bg-hbf-cream/30 p-4 outline-none transition-all focus:ring-2 focus:ring-hbf-green/20 focus:border-hbf-green focus:bg-white"
-            placeholder="Dites-nous en plus sur vos motivations..."
+            className={`w-full rounded-2xl border bg-hbf-cream/30 p-4 outline-none transition-all focus:ring-2 focus:ring-hbf-green/20 focus:bg-white ${errors.message ? "border-red-400 bg-red-50/30" : "border-hbf-green/10 focus:border-hbf-green"}`}
+            placeholder="Tell us more about your motivations..."
           />
+          {errors.message && <p className="text-xs font-medium text-red-500 ml-1">{errors.message.message}</p>}
         </div>
 
         {error && (
@@ -174,11 +175,11 @@ export function ApplicationForm() {
           {isSubmitting ? (
             <div className="flex items-center gap-2">
               <Loader2 className="animate-spin" size={24} />
-              Envoi en cours...
+              Sending...
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              Soumettre ma candidature
+              Submit My Application
               <Send size={20} />
             </div>
           )}

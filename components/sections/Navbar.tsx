@@ -96,7 +96,7 @@ export function Navbar() {
         <div className="hidden items-center gap-3 lg:flex">
           <Button
             asChild
-            className="rounded-md bg-hbf-green px-7 text-white shadow-[0_10px_24px_rgba(46,125,50,0.18)] hover:bg-hbf-green-light hover:shadow-[0_14px_30px_rgba(46,125,50,0.22)]"
+            className="rounded-full bg-hbf-green px-8 text-white font-bold shadow-[0_10px_24px_rgba(46,125,50,0.18)] hover:bg-hbf-green-light hover:shadow-[0_14px_30px_rgba(46,125,50,0.22)] transition-all hover:scale-105"
           >
             <a href={donation.href} target="_blank" rel="noreferrer">
               Donate
@@ -149,7 +149,7 @@ export function Navbar() {
               ))}
               <Button
                 asChild
-                className="mt-4 w-full rounded-md bg-hbf-green text-white shadow-[0_10px_24px_rgba(46,125,50,0.18)] hover:bg-hbf-green-light"
+                className="mt-4 w-full rounded-xl bg-hbf-green text-white font-bold shadow-lg hover:bg-hbf-green-light"
                 onClick={() => setIsOpen(false)}
               >
                 <a href={donation.href} target="_blank" rel="noreferrer">

@@ -102,14 +102,14 @@ export function Footer() {
 
           {/* Support Column */}
           <div className="flex flex-col gap-6">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-hbf-brown mb-6 relative pb-2 inline-block group cursor-default">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-hbf-orange mb-6 relative pb-2 inline-block group cursor-default">
               Support Our Mission
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-hbf-orange transition-all duration-300 group-hover:w-full"></span>
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-hbf-gold transition-all duration-300 group-hover:w-full"></span>
             </h3>
             <p className="text-sm text-white/60">
-              Your contribution directly impacts the lives of students across Haiti.
+              Your contribution directly impacts the lives of students across Haiti. Haiti Bright Futures (HBF) is a 501(c)(3) nonprofit organization.
             </p>
-            <Button asChild className="bg-hbf-green hover:bg-hbf-green-light text-white font-bold h-12">
+            <Button asChild className="bg-hbf-green hover:bg-hbf-green-light text-white font-black h-14 rounded-xl shadow-lg transition-all hover:scale-105">
               <a href={donation.href} target="_blank" rel="noreferrer">
                 Donate Now
               </a>
@@ -118,11 +118,11 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/40">
-          <p>© {new Date().getFullYear()} Haiti Bright Futures. All Rights Reserved.</p>
+        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/40 text-center md:text-left">
+          <p>© {new Date().getFullYear()} Haiti Bright Futures. A registered 501(c)(3) nonprofit organization. All Rights Reserved.</p>
           <div className="flex gap-6 text-[13px]">
-            <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
+            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
           </div>
         </div>
       </div>

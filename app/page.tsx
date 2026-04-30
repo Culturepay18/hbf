@@ -11,6 +11,8 @@ import { Team } from "@/components/sections/Team";
 import { SupportMission } from "@/components/sections/SupportMission";
 
 import { MissionVision } from "@/components/sections/MissionVision";
+import { WhyHBF } from "@/components/sections/WhyHBF";
+import { ProjectPreview } from "@/components/sections/ProjectPreview";
 
 export default function Home() {
   return (
@@ -20,10 +22,10 @@ export default function Home() {
         <Hero />
         <MissionVision />
         <Stats />
+        <WhyHBF />
+        <ProjectPreview />
         <Scholarships />
         <Team />
-        <HowItWorks />
-        <Blog />
         <SupportMission />
         <Contact />
       </main>

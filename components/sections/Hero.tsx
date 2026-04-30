@@ -59,62 +59,16 @@ export function Hero() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="mb-4 max-w-2xl"
+            className="mb-4 max-w-4xl"
           >
-            <p className="text-base text-white/90 sm:text-xl px-2 font-medium">
-              Creating opportunities through scholarships, sports, and youth programs that help Haitian students pursue their aspirations.
+            <h1 className="text-4xl font-bold leading-tight tracking-tight text-white sm:text-6xl lg:text-7xl font-[family-name:var(--font-patrick-hand)]">
+              Building Haiti's Future Leaders Through Innovation and Opportunity
+            </h1>
+            <p className="mt-6 text-lg text-white/90 sm:text-2xl px-2 font-medium max-w-3xl mx-auto">
+              Haiti Bright Futures identifies, develops, and supports high-potential students through competition, mentorship, and real-world projects.
             </p>
-            <div className="mt-8 flex flex-row justify-center items-center gap-2 sm:gap-4 px-2 sm:px-0">
-              <Button asChild className="h-10 sm:h-14 flex-1 sm:flex-none bg-hbf-orange px-3 sm:px-8 text-[13px] sm:text-lg font-bold text-white shadow-lg hover:bg-hbf-orange-light">
-                <Link href="/scholarship-application">
-                  Apply Now
-                </Link>
-              </Button>
-              <Button asChild className="h-10 sm:h-14 flex-1 sm:flex-none bg-white px-3 sm:px-8 text-[13px] sm:text-lg font-bold text-hbf-green shadow-lg hover:bg-white/90">
-                <a href={donation.href} target="_blank" rel="noreferrer">
-                  Donate Now
-                </a>
-              </Button>
-            </div>
           </motion.div>
 
-          {/* Premium Stats Grid */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-8 w-full max-w-4xl"
-          >
-            <div className="grid grid-cols-2 gap-y-6 gap-x-4 sm:flex sm:flex-nowrap sm:justify-between sm:gap-4 py-4">
-              <div className="flex flex-col items-center px-2">
-                <span className="text-2xl font-bold text-white sm:text-4xl">
-                  <StatCounter value={10} />
-                </span>
-                <span className="text-[9px] font-medium uppercase tracking-[0.15em] text-white/70 mt-1">Partner Schools</span>
-              </div>
-              
-              <div className="flex flex-col items-center px-2 border-l border-white/10 sm:border-l-0">
-                <span className="text-2xl font-bold text-white sm:text-4xl">
-                  <StatCounter value={5} />
-                </span>
-                <span className="text-[9px] font-medium uppercase tracking-[0.15em] text-white/70 mt-1">Winners Selected</span>
-              </div>
-
-              <div className="flex flex-col items-center px-2 pt-4 sm:pt-0 border-t border-white/10 sm:border-t-0 sm:border-l">
-                <span className="text-2xl font-bold text-white sm:text-4xl">
-                  <StatCounter value={20} />
-                </span>
-                <span className="text-[9px] font-medium uppercase tracking-[0.15em] text-white/70 mt-1 leading-tight">Finalists<br/>Scholarship 2026</span>
-              </div>
-
-              <div className="flex flex-col items-center px-2 pt-4 sm:pt-0 border-t border-white/10 border-l sm:border-t-0 sm:border-l sm:pt-0">
-                <span className="text-2xl font-bold text-white sm:text-4xl">
-                  $<StatCounter value={1000} />
-                </span>
-                <span className="text-[9px] font-medium uppercase tracking-[0.15em] text-white/70 mt-1">School Support</span>
-              </div>
-            </div>
-          </motion.div>
         </div>
       </div>
     </section>
