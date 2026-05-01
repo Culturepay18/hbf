@@ -17,10 +17,10 @@ export default function ScholarshipApplicationPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-hbf-orange">Scholarship Application</p>
           <h1 className="mt-4 text-4xl md:text-5xl font-bold text-hbf-dark font-[family-name:var(--font-patrick-hand)]">
-            Start Your <span className="text-hbf-green">Future</span> Today
+            Apply in <span className="text-hbf-green">Four Simple Steps</span>
           </h1>
           <p className="mt-6 max-w-2xl mx-auto text-lg text-hbf-muted">
-            Please fill out the form below with accuracy. Once submitted, you will receive a confirmation email and our team will contact you for the next steps of the process.
+            Share your contact details, school information, and a short motivation message. Our team will review your application and follow up.
           </p>
         </div>
       </section>
