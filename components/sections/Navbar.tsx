@@ -263,8 +263,9 @@ export function Navbar() {
             target="_blank"
             rel="noreferrer"
             className={[
-              "focus-hbf inline-flex rounded-full bg-hbf-green px-4 py-2 text-[13px] font-bold text-white shadow-[0_10px_24px_rgba(46,125,50,0.18)] transition-all duration-300 hover:bg-hbf-green-light lg:px-5 lg:py-2.5 lg:text-sm",
+              "focus-hbf rounded-full bg-hbf-green px-4 py-2 text-[13px] font-bold text-white shadow-[0_10px_24px_rgba(46,125,50,0.18)] transition-all duration-300 hover:bg-hbf-green-light lg:px-5 lg:py-2.5 lg:text-sm",
               "scale-100 opacity-100 pointer-events-auto",
+              isSolid ? "inline-flex" : "hidden lg:inline-flex"
             ].join(" ")}
           >
             Donate
