@@ -161,7 +161,7 @@ export function ApplicationForm() {
         className="rounded-2xl border border-black/5 bg-white p-6 shadow-soft sm:p-8"
       >
         <div className="mb-8">
-          <div className="mx-auto grid w-fit grid-cols-[auto_3rem_auto_3rem_auto_3rem_auto] items-center justify-center gap-2 sm:grid-cols-[auto_6rem_auto_6rem_auto_6rem_auto]">
+          <div className="mx-auto grid w-fit grid-cols-[auto_1.25rem_auto_1.25rem_auto_1.25rem_auto] items-center justify-center gap-1 sm:grid-cols-[auto_6rem_auto_6rem_auto_6rem_auto] sm:gap-2">
             {steps
               .map((step, index) => {
                 const isActive = index === currentStep;
