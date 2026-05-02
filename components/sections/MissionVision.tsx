@@ -70,35 +70,39 @@ export function MissionVision() {
           </div>
 
           {/* Photos à droite - Design Collage "Dope" */}
-          <div className="relative order-1 lg:order-2 flex flex-col gap-16 lg:block lg:h-[500px] md:h-[600px]">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="relative w-full aspect-[4/5] rounded-[40px] overflow-hidden shadow-2xl z-10 lg:absolute lg:top-0 lg:right-0 lg:w-4/5 lg:border-8 lg:border-white lg:-rotate-2 lg:translate-x-4"
-            >
-              <Image
-                src="/images/JOA06340.jpg"
-                alt="Haiti Bright Futures students"
-                fill
-                className="object-cover"
-              />
-            </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="relative w-full aspect-[4/5] rounded-[40px] overflow-hidden shadow-2xl z-0 lg:absolute lg:bottom-0 lg:left-0 lg:w-3/4 lg:border-8 lg:border-white lg:rotate-3 lg:-translate-x-4"
-            >
-              <Image
-                src="/images/JOA06389.jpg"
-                alt="Haiti Bright Futures activity"
-                fill
-                className="object-cover"
-              />
-            </motion.div>
+          <div className="order-1 lg:order-2">
+            <div className="relative h-[400px] sm:h-[500px] md:h-[600px] w-full max-w-[500px] mx-auto lg:ml-auto">
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, rotate: 5 }}
+                whileInView={{ opacity: 1, scale: 1, rotate: -2 }}
+                viewport={{ once: true }}
+                className="absolute top-0 right-0 w-[80%] aspect-[4/5] rounded-[30px] md:rounded-[40px] overflow-hidden shadow-2xl z-10 border-4 md:border-8 border-white"
+              >
+                <Image
+                  src="/images/JOA06340.jpg"
+                  alt="Haiti Bright Futures students"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              </motion.div>
+              
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.95, rotate: -5 }}
+                whileInView={{ opacity: 1, scale: 1, rotate: 3 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2 }}
+                className="absolute bottom-0 left-0 w-[75%] aspect-[4/5] rounded-[30px] md:rounded-[40px] overflow-hidden shadow-2xl z-0 border-4 md:border-8 border-white"
+              >
+                <Image
+                  src="/images/JOA06389.jpg"
+                  alt="Haiti Bright Futures activity"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              </motion.div>
+            </div>
           </div>
 
         </div>

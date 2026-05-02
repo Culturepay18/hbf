@@ -70,15 +70,17 @@ export function ProjectPreview() {
               initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              className="bg-hbf-cream/30 border border-hbf-green/10 rounded-[2.5rem] p-10 relative overflow-hidden"
+              className="bg-hbf-cream/30 border border-hbf-green/10 rounded-[2.5rem] p-8 md:p-10 relative overflow-hidden"
             >
-              <Badge className="absolute top-8 right-8 bg-hbf-green/10 text-hbf-green hover:bg-hbf-green/10 border-none px-4 py-1 rounded-full">
-                Finalist Team
-              </Badge>
-              
-              <h4 className="text-3xl font-bold text-hbf-dark mb-8 font-[family-name:var(--font-patrick-hand)]">
-                Team: {project.team}
-              </h4>
+              <div className="flex flex-col gap-4 lg:block">
+                <Badge className="w-fit bg-hbf-green/10 text-hbf-green hover:bg-hbf-green/10 border-none px-4 py-1 rounded-full lg:absolute lg:top-8 lg:right-8">
+                  Finalist Team
+                </Badge>
+                
+                <h4 className="text-3xl font-bold text-hbf-dark mb-8 font-[family-name:var(--font-patrick-hand)]">
+                  Team: {project.team}
+                </h4>
+              </div>
 
               <div className="space-y-6">
                 <div>

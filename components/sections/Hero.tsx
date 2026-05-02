@@ -33,7 +33,7 @@ export function Hero() {
   const prefersReducedMotion = useReducedMotion();
 
   return (
-    <section id="home" className="relative h-screen w-full overflow-hidden">
+    <section id="home" className="relative h-[100dvh] w-full overflow-hidden">
       <div className="relative h-full w-full overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
@@ -48,7 +48,7 @@ export function Hero() {
           <div className="absolute inset-0 bg-black/40 z-10" />
         </div>
 
-        <div className="relative z-20 mx-auto flex h-full max-w-7xl flex-col items-center justify-start pt-32 sm:pt-[50vh] px-8 text-center sm:px-6 lg:px-8">
+        <div className="relative z-20 mx-auto flex h-full max-w-7xl flex-col items-center justify-start pt-[50vh] px-8 text-center sm:px-6 lg:px-8">
           {/* Main Title & Description */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
