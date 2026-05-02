@@ -70,12 +70,12 @@ export function MissionVision() {
           </div>
 
           {/* Photos à droite - Design Collage "Dope" */}
-          <div className="relative order-1 lg:order-2 h-[500px] md:h-[600px]">
+          <div className="relative order-1 lg:order-2 flex flex-col gap-16 lg:block lg:h-[500px] md:h-[600px]">
             <motion.div 
-              initial={{ opacity: 0, x: 50, rotate: 5 }}
-              whileInView={{ opacity: 1, x: 0, rotate: -2 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="absolute top-0 right-0 w-4/5 aspect-[4/5] rounded-[40px] overflow-hidden shadow-2xl z-10 border-8 border-white"
+              className="relative w-full aspect-[4/5] rounded-[40px] overflow-hidden shadow-2xl z-10 lg:absolute lg:top-0 lg:right-0 lg:w-4/5 lg:border-8 lg:border-white lg:-rotate-2 lg:translate-x-4"
             >
               <Image
                 src="/images/JOA06340.jpg"
@@ -86,11 +86,11 @@ export function MissionVision() {
             </motion.div>
             
             <motion.div 
-              initial={{ opacity: 0, x: -50, rotate: -5 }}
-              whileInView={{ opacity: 1, x: 0, rotate: 3 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="absolute bottom-0 left-0 w-3/4 aspect-[4/5] rounded-[40px] overflow-hidden shadow-2xl z-0 border-8 border-white"
+              className="relative w-full aspect-[4/5] rounded-[40px] overflow-hidden shadow-2xl z-0 lg:absolute lg:bottom-0 lg:left-0 lg:w-3/4 lg:border-8 lg:border-white lg:rotate-3 lg:-translate-x-4"
             >
               <Image
                 src="/images/JOA06389.jpg"

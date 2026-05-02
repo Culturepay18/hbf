@@ -15,8 +15,7 @@ export function SupportMission() {
         alt="Support Haiti Bright Futures"
         fill
         className="object-cover"
-        quality={100}
-        unoptimized={true}
+        sizes="100vw"
       />
       <div className="absolute inset-0 bg-hbf-dark/70"></div>
       

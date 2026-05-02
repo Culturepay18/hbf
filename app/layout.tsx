@@ -46,8 +46,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${poppins.variable} ${patrickHand.variable} h-full scroll-smooth`}>
-      <body className="min-h-full font-sans text-hbf-dark">
+    <html lang="en" className={`${poppins.variable} ${patrickHand.variable} h-full scroll-smooth overflow-x-hidden`}>
+      <body className="min-h-full font-sans text-hbf-dark overflow-x-hidden">
         {children}
       </body>
     </html>
