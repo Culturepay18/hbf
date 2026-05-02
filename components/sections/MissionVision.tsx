@@ -14,7 +14,7 @@ export function MissionVision() {
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           
           {/* Texte à gauche */}
-          <div className="order-2 lg:order-1">
+          <div className="order-1">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -53,7 +53,8 @@ export function MissionVision() {
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-4">
+              {/* Boutons Desktop uniquement */}
+              <div className="hidden lg:flex flex-wrap gap-4">
                 <Button asChild className="h-14 px-8 bg-hbf-orange hover:bg-hbf-orange-light text-white font-bold rounded-xl shadow-lg transition-all hover:scale-105">
                   <a href={donation.href} target="_blank" rel="noreferrer">
                     Donate Now
@@ -69,9 +70,8 @@ export function MissionVision() {
             </motion.div>
           </div>
 
-          {/* Photos à droite - Design Collage "Dope" */}
-          <div className="order-1 lg:order-2">
-            <div className="relative h-[400px] sm:h-[500px] md:h-[600px] w-full max-w-[500px] mx-auto lg:ml-auto">
+          <div className="order-2">
+            <div className="relative h-[550px] sm:h-[600px] lg:h-[450px] xl:h-[500px] w-full max-w-[400px] mx-auto lg:ml-auto mb-16 lg:mb-0">
               <motion.div 
                 initial={{ opacity: 0, scale: 0.95, rotate: 5 }}
                 whileInView={{ opacity: 1, scale: 1, rotate: -2 }}
@@ -103,8 +103,22 @@ export function MissionVision() {
                 />
               </motion.div>
             </div>
+            
+            {/* Boutons Mobile uniquement, après les photos */}
+            <div className="lg:hidden flex flex-row gap-3 justify-center px-2 mt-20">
+              <Button asChild className="h-12 px-5 bg-hbf-orange hover:bg-hbf-orange-light text-white font-bold rounded-xl shadow-lg transition-all hover:scale-105 text-sm">
+                <a href={donation.href} target="_blank" rel="noreferrer">
+                  Donate Now
+                </a>
+              </Button>
+              <Button asChild variant="outline" className="h-12 px-5 border-2 border-hbf-green text-hbf-green font-bold rounded-xl hover:bg-hbf-green hover:text-white transition-all hover:scale-105 text-sm">
+                <Link href="/scholarship-application">
+                  Apply Now
+                  <ArrowRight className="ml-1" size={16} />
+                </Link>
+              </Button>
+            </div>
           </div>
-
         </div>
       </div>
     </section>
