@@ -129,7 +129,7 @@ export default function ScholarshipsPage() {
 
             <div className="relative min-h-[480px] overflow-hidden rounded-lg bg-hbf-dark shadow-[0_24px_70px_rgba(15,23,42,0.18)]">
               <Image
-                src="/images/JOA03692.jpg"
+                src="/images/JOA06605.jpg"
                 alt="Haiti Bright Futures students"
                 fill
                 priority

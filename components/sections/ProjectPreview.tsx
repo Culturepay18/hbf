@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 
 const projects = [
   {
@@ -26,21 +27,40 @@ export function ProjectPreview() {
   return (
     <section className="py-24 bg-white">
       <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between items-end gap-8 mb-16">
-          <div className="max-w-2xl">
+        <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
+          <div>
             <h2 className="text-hbf-orange font-bold tracking-[0.2em] uppercase text-sm mb-4">
               Innovation Lab
             </h2>
             <h3 className="text-4xl md:text-5xl font-bold text-hbf-dark font-[family-name:var(--font-patrick-hand)] mb-6">
-              Student Projects Preview
+              Real World Challenges
             </h3>
-            <p className="text-lg text-hbf-muted italic">
-              "Our finalists develop practical solutions focused on sustainability, recycling, and economic opportunity."
-            </p>
+            <div className="space-y-6 text-lg text-hbf-muted">
+              <p className="font-semibold text-hbf-dark">
+                "Our students are working on waste-to-economy solutions in Cap-Haïtien."
+              </p>
+              <p>
+                HBF identifies and develops student-led solutions to real world challenges such as waste management and sanitation.
+              </p>
+              <p>
+                Alignment with large-scale sanitation challenges currently being addressed by international and local actors.
+              </p>
+            </div>
+            <div className="mt-8">
+              <Button asChild variant="outline" className="rounded-full border-2 border-hbf-green text-hbf-green hover:bg-hbf-green hover:text-white font-bold px-8">
+                <Link href="/innovation-lab">View All Projects</Link>
+              </Button>
+            </div>
           </div>
-          <Button asChild variant="outline" className="rounded-full border-2 border-hbf-green text-hbf-green hover:bg-hbf-green hover:text-white font-bold px-8">
-            <Link href="/innovation-lab">View All Projects</Link>
-          </Button>
+          <div className="relative h-[600px] w-full rounded-[2.5rem] overflow-hidden shadow-soft">
+            <Image
+              src="/images/JOA06333.jpg"
+              alt="Haiti Bright Futures students working"
+              fill
+              className="object-cover"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+            />
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-10">

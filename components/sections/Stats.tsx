@@ -43,7 +43,7 @@ export function Stats() {
           {/* Photo à gauche */}
           <div className="w-full lg:w-1/2 relative aspect-[4/5] rounded-[40px] overflow-hidden shadow-2xl">
             <Image
-              src="/images/DSC08667.jpg"
+              src="/images/JOA06600.jpg"
               alt="Haiti Bright Futures Impact"
               fill
               className="object-cover"

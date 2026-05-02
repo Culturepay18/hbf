@@ -10,13 +10,17 @@ export default function AboutPage() {
   return (
     <>
       <Navbar />
-      <main className="pt-24">
+      <main>
         {/* Hero Section Page About */}
-        <section className="relative bg-hbf-green py-20 text-white overflow-hidden">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 left-0 w-64 h-64 bg-white rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl"></div>
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-hbf-orange rounded-full translate-x-1/2 translate-y-1/2 blur-3xl"></div>
-          </div>
+        <section className="relative min-h-[500px] flex items-center justify-center text-white overflow-hidden pt-24 pb-20">
+          <Image
+            src="/images/JOA06340.jpg"
+            alt="Haiti Bright Futures students"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-hbf-dark/60"></div>
           
           <div className="container relative z-10 mx-auto px-4 text-center">
             <motion.h1 
@@ -43,7 +47,7 @@ export default function AboutPage() {
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div className="relative aspect-square rounded-[40px] overflow-hidden shadow-2xl order-2 md:order-1">
                 <Image
-                  src="/images/JOA03784.jpg"
+                  src="/images/JOA06335.jpg"
                   alt="Our mission in action"
                   fill
                   className="object-cover"

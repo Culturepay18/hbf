@@ -23,8 +23,8 @@ export default function Home() {
         <MissionVision />
         <Stats />
         <WhyHBF />
-        <ProjectPreview />
         <Scholarships />
+        <ProjectPreview />
         <Team />
         <SupportMission />
         <Contact />

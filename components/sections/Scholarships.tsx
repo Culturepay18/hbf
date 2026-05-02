@@ -1,5 +1,6 @@
 import { Calendar, Trophy } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { scholarships, type ScholarshipStatus } from "@/lib/data";
@@ -19,13 +20,28 @@ function isUrgent(deadline: string) {
 
 export function Scholarships() {
   return (
-    <section id="scholarships" className="bg-hbf-cream py-20">
+    <section id="scholarships" className="bg-white py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.1em] text-hbf-orange">Scholarships</p>
-          <h2 className="mt-3 text-4xl font-semibold leading-tight tracking-normal text-hbf-dark">
-            Scholarship Opportunities
-          </h2>
+        <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
+          <div className="max-w-2xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.1em] text-hbf-orange">Scholarships</p>
+            <h2 className="mt-3 text-4xl md:text-5xl font-bold leading-tight text-hbf-dark font-[family-name:var(--font-patrick-hand)]">
+              Scholarship Opportunities
+            </h2>
+            <p className="mt-6 text-lg text-hbf-muted leading-relaxed">
+              We believe every child in Haiti deserves the opportunity to succeed. Our scholarship programs are designed to break down barriers and support future leaders as they pursue their aspirations.
+            </p>
+          </div>
+          <div className="relative h-[400px] w-full rounded-[2.5rem] overflow-hidden shadow-soft">
+            <Image
+              src="/images/JOA06465.jpg"
+              alt="Haiti Bright Futures scholars"
+              fill
+              quality={100}
+              className="object-cover object-center"
+              sizes="(max-width: 1024px) 100vw, 50vw"
+            />
+          </div>
         </div>
 
         <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">

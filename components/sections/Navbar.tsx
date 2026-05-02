@@ -114,6 +114,7 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [openGroups, setOpenGroups] = useState<string[]>([]);
   const pathname = usePathname();
+  
   const isHomePage = pathname === "/";
   const prefersReducedMotion = useReducedMotion();
   const isSolid = !isHomePage || isScrolled || isOpen;
@@ -133,11 +134,16 @@ export function Navbar() {
       setIsScrolled(window.scrollY > 50);
     };
 
-    const frame = window.requestAnimationFrame(handleScroll);
+    // Check immediately and after a short delay to catch browser scroll restoration
+    handleScroll();
+    const timeoutId1 = setTimeout(handleScroll, 100);
+    const timeoutId2 = setTimeout(handleScroll, 500);
+
     window.addEventListener("scroll", handleScroll, { passive: true });
 
     return () => {
-      window.cancelAnimationFrame(frame);
+      clearTimeout(timeoutId1);
+      clearTimeout(timeoutId2);
       window.removeEventListener("scroll", handleScroll);
     };
   }, [isHomePage]);
@@ -166,9 +172,9 @@ export function Navbar() {
           <Image
             src="/images/logo-hbf-01.png"
             alt="Logo Haiti Bright Futures"
-            width={58}
-            height={58}
-            className="h-12 w-auto object-contain"
+            width={119}
+            height={170}
+            className="h-16 w-auto object-contain"
             style={{ filter: isSolid ? "none" : "brightness(0) invert(1)" }}
             priority
           />
@@ -258,9 +264,7 @@ export function Navbar() {
             rel="noreferrer"
             className={[
               "focus-hbf inline-flex rounded-full bg-hbf-green px-4 py-2 text-[13px] font-bold text-white shadow-[0_10px_24px_rgba(46,125,50,0.18)] transition-all duration-300 hover:bg-hbf-green-light lg:px-5 lg:py-2.5 lg:text-sm",
-              isSolid
-                ? "scale-100 opacity-100 pointer-events-auto"
-                : "pointer-events-none scale-90 opacity-0 lg:pointer-events-auto lg:scale-100 lg:opacity-100",
+              "scale-100 opacity-100 pointer-events-auto",
             ].join(" ")}
           >
             Donate

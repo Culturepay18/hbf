@@ -15,7 +15,7 @@ export function PhotoGallery() {
             className="relative aspect-[4/3] rounded-[40px] overflow-hidden shadow-2xl"
           >
             <Image
-              src="/images/JOA03692.jpg"
+              src="/images/JOA06517.jpg"
               alt="Haiti Bright Futures activity"
               fill
               className="object-cover"
@@ -30,7 +30,7 @@ export function PhotoGallery() {
             className="relative aspect-[4/3] rounded-[40px] overflow-hidden shadow-2xl"
           >
             <Image
-              src="/images/JOA03764.jpg"
+              src="/images/JOA06465.jpg"
               alt="Haiti Bright Futures students"
               fill
               className="object-cover"

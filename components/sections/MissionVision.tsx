@@ -78,7 +78,7 @@ export function MissionVision() {
               className="absolute top-0 right-0 w-4/5 aspect-[4/5] rounded-[40px] overflow-hidden shadow-2xl z-10 border-8 border-white"
             >
               <Image
-                src="/images/JOA03692.jpg"
+                src="/images/JOA06340.jpg"
                 alt="Haiti Bright Futures students"
                 fill
                 className="object-cover"
@@ -93,7 +93,7 @@ export function MissionVision() {
               className="absolute bottom-0 left-0 w-3/4 aspect-[4/5] rounded-[40px] overflow-hidden shadow-2xl z-0 border-8 border-white"
             >
               <Image
-                src="/images/JOA03764.jpg"
+                src="/images/JOA06389.jpg"
                 alt="Haiti Bright Futures activity"
                 fill
                 className="object-cover"
