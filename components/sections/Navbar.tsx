@@ -67,7 +67,7 @@ const navigationGroups: NavigationGroup[] = [
   },
   {
     label: "News and stories",
-    activePaths: ["/"],
+    activePaths: [],
     items: [
       {
         label: "Latest stories",
@@ -172,15 +172,7 @@ export function Navbar() {
             style={{ filter: isSolid ? "none" : "brightness(0) invert(1)" }}
             priority
           />
-          <span
-            className={[
-              "hidden text-sm font-semibold leading-tight sm:block",
-              isSolid ? "text-hbf-dark" : "text-white",
-            ].join(" ")}
-          >
-            Haiti Bright
-            <span className={isSolid ? "block text-hbf-green" : "block text-white/90"}>Futures</span>
-          </span>
+
         </Link>
 
         <div className="hidden items-center gap-1 lg:flex">

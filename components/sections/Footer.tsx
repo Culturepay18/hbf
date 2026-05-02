@@ -6,11 +6,11 @@ import { contact, donation, navLinks } from "@/lib/data";
 
 export function Footer() {
   return (
-    <footer className="bg-hbf-dark text-white py-12">
+    <footer className="bg-hbf-dark text-white py-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-6">
           {/* Column 1: Brand & Contact */}
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
             <div className="flex items-center gap-3">
               <div className="relative h-12 w-12">
                 <Image
@@ -29,26 +29,23 @@ export function Footer() {
               Empowering the next generation of Haitian leaders through education, sports, and holistic development.
             </p>
             
-            <div className="flex flex-col gap-3 mt-2">
-              <a href={`mailto:${contact.email}`} className="flex items-center gap-3 text-white/80 hover:text-white transition-colors group text-sm">
+            <div className="flex flex-wrap items-center gap-6 mt-1">
+              <a href={`mailto:${contact.email}`} className="flex items-center gap-2 text-white/80 hover:text-white transition-colors group text-sm">
                 <Mail className="size-4 text-hbf-green-light" />
                 <span>{contact.email}</span>
               </a>
-              <a href={contact.whatsappUrl} className="flex items-center gap-3 text-white/80 hover:text-white transition-colors group text-sm">
+              <a href={contact.whatsappUrl} className="flex items-center gap-2 text-white/80 hover:text-white transition-colors group text-sm">
                 <MessageCircle className="size-4 text-hbf-green-light" />
                 <span>{contact.whatsapp}</span>
               </a>
-            </div>
-
-            <div className="flex gap-4 mt-2">
               <a 
                 href={contact.instagramUrl} 
                 target="_blank" 
                 rel="noreferrer" 
-                className="p-2 rounded-full bg-white/5 hover:bg-hbf-green transition-all hover:scale-110" 
+                className="p-2 rounded-full bg-white/5 hover:bg-hbf-green transition-all hover:scale-110 flex items-center justify-center" 
                 title="Instagram"
               >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-5">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="size-4">
                   <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                   <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                   <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
@@ -78,12 +75,8 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/40 text-center md:text-left">
-          <p>© {new Date().getFullYear()} Haiti Bright Futures. A registered 501(c)(3) nonprofit organization. All Rights Reserved.</p>
-          <div className="flex gap-6 text-[13px]">
-            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
-          </div>
+        <div className="pt-6 border-t border-white/10 flex justify-center items-center text-sm text-white/40 text-center">
+          <p>© {new Date().getFullYear()} Haiti Bright Futures. All Rights Reserved.</p>
         </div>
       </div>
     </footer>
