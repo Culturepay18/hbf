@@ -30,6 +30,24 @@ export type BlogPost = {
   excerpt: string;
 };
 
+export const blogPosts: BlogPost[] = [
+  {
+    title: "The Importance of Youth Leadership in Haiti",
+    href: "#",
+    excerpt: "Discover how empowering the next generation can transform communities and drive sustainable development in Haiti.",
+  },
+  {
+    title: "Highlights from the 2024 Essay Competition",
+    href: "#",
+    excerpt: "A look back at the incredible ideas and solutions proposed by students from Cap-Haitien in our latest competition.",
+  },
+  {
+    title: "How Sports Build Character and Teamwork",
+    href: "#",
+    excerpt: "Learn about our Sports & Education program and its impact on helping young athletes develop critical life skills.",
+  },
+];
+
 export const contact = {
   email: "info@hbfhaiti.org",
   whatsapp: "+1 (954) 274-4509",
