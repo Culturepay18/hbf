@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { ChevronDown, Menu, Minus, Plus, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -112,10 +112,17 @@ function isGroupActive(pathname: string, group: NavigationGroup) {
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [openGroups, setOpenGroups] = useState<string[]>([]);
   const pathname = usePathname();
   const isHomePage = pathname === "/";
   const prefersReducedMotion = useReducedMotion();
   const isSolid = !isHomePage || isScrolled || isOpen;
+
+  const toggleGroup = (label: string) => {
+    setOpenGroups((prev) =>
+      prev.includes(label) ? prev.filter((g) => g !== label) : [...prev, label]
+    );
+  };
 
   useEffect(() => {
     if (!isHomePage) {
@@ -155,13 +162,13 @@ export function Navbar() {
         aria-label="Main navigation"
         className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"
       >
-        <Link href="/" className="focus-hbf flex shrink-0 items-center gap-3 rounded-full">
+        <Link href="/" className="focus-hbf flex shrink-0 items-center gap-3 rounded-md" onClick={() => setIsOpen(false)}>
           <Image
-            src="/images/hbf-logo.png"
+            src="/images/logo-hbf-01.png"
             alt="Logo Haiti Bright Futures"
             width={58}
             height={58}
-            className="h-12 w-12 rounded-full object-contain"
+            className="h-12 w-auto object-contain"
             style={{ filter: isSolid ? "none" : "brightness(0) invert(1)" }}
             priority
           />
@@ -252,29 +259,36 @@ export function Navbar() {
           })}
         </div>
 
-        <a
-          href={donation.href}
-          target="_blank"
-          rel="noreferrer"
-          className="focus-hbf hidden rounded-full bg-hbf-green px-5 py-2.5 text-sm font-bold text-white shadow-[0_10px_24px_rgba(46,125,50,0.18)] transition hover:bg-hbf-green-light lg:inline-flex"
-        >
-          Donate
-        </a>
+        <div className="flex items-center gap-3 lg:gap-4">
+          <a
+            href={donation.href}
+            target="_blank"
+            rel="noreferrer"
+            className={[
+              "focus-hbf inline-flex rounded-full bg-hbf-green px-4 py-2 text-[13px] font-bold text-white shadow-[0_10px_24px_rgba(46,125,50,0.18)] transition-all duration-300 hover:bg-hbf-green-light lg:px-5 lg:py-2.5 lg:text-sm",
+              isSolid
+                ? "scale-100 opacity-100 pointer-events-auto"
+                : "pointer-events-none scale-90 opacity-0 lg:pointer-events-auto lg:scale-100 lg:opacity-100",
+            ].join(" ")}
+          >
+            Donate
+          </a>
 
-        <button
-          type="button"
-          aria-label={isOpen ? "Close menu" : "Open menu"}
-          aria-expanded={isOpen}
-          className={[
-            "focus-hbf inline-flex h-11 w-11 items-center justify-center rounded-full transition-all lg:hidden",
-            isSolid
-              ? "bg-white text-hbf-dark shadow-soft"
-              : "border border-white/20 bg-white/10 text-white backdrop-blur-sm",
-          ].join(" ")}
-          onClick={() => setIsOpen((value) => !value)}
-        >
-          {isOpen ? <X aria-hidden="true" size={22} /> : <Menu aria-hidden="true" size={22} />}
-        </button>
+          <button
+            type="button"
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isOpen}
+            className={[
+              "focus-hbf inline-flex h-11 w-11 items-center justify-center rounded-full transition-all lg:hidden",
+              isSolid
+                ? "bg-white text-hbf-dark shadow-soft"
+                : "border border-white/20 bg-white/10 text-white backdrop-blur-sm",
+            ].join(" ")}
+            onClick={() => setIsOpen((value) => !value)}
+          >
+            {isOpen ? <X aria-hidden="true" size={22} /> : <Menu aria-hidden="true" size={22} />}
+          </button>
+        </div>
       </nav>
 
       <AnimatePresence>
@@ -286,47 +300,82 @@ export function Navbar() {
             transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
             className="fixed inset-x-0 top-20 z-40 max-h-[calc(100vh-5rem)] overflow-y-auto bg-white px-5 py-6 shadow-[0_24px_60px_rgba(15,23,42,0.14)] lg:hidden"
           >
-            <div className="mx-auto flex max-w-2xl flex-col gap-5">
-              {navigationGroups.map((group) => (
-                <section key={group.label} className="border-b border-black/10 pb-5 last:border-b-0">
-                  <h2 className="text-base font-bold text-hbf-dark">{group.label}</h2>
-                  <div className="mt-3 grid gap-2">
-                    {group.items.map((item) => {
-                      const className = [
-                        "focus-hbf rounded-md px-3 py-2.5 transition",
-                        !item.external && pathname === item.href
-                          ? "bg-hbf-green/10 text-hbf-green"
-                          : "text-hbf-dark hover:bg-hbf-cream",
-                      ].join(" ");
-
-                      const content = (
-                        <>
-                          <span className="block text-sm font-semibold">{item.label}</span>
-                          {item.description ? (
-                            <span className="mt-0.5 block text-xs leading-5 text-slate-500">{item.description}</span>
-                          ) : null}
-                        </>
-                      );
-
-                      return item.external ? (
-                        <a
-                          key={item.label}
-                          href={item.href}
-                          target="_blank"
-                          rel="noreferrer"
-                          className={className}
+            <div className="mx-auto flex max-w-2xl flex-col">
+              {navigationGroups.map((group) => {
+                const isExpanded = openGroups.includes(group.label);
+                return (
+                  <section key={group.label} className="border-b border-black/10 py-4 first:pt-0 last:border-b-0">
+                    <button
+                      type="button"
+                      className="flex w-full items-center justify-between text-left"
+                      onClick={() => toggleGroup(group.label)}
+                    >
+                      <h2 className="text-base font-bold text-hbf-dark">{group.label}</h2>
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-black/5 text-hbf-dark transition-colors hover:bg-black/10">
+                        {isExpanded ? <Minus size={18} /> : <Plus size={18} />}
+                      </div>
+                    </button>
+                    <AnimatePresence initial={false}>
+                      {isExpanded && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className="overflow-hidden"
                         >
-                          {content}
-                        </a>
-                      ) : (
-                        <Link key={item.href} href={item.href} className={className}>
-                          {content}
-                        </Link>
-                      );
-                    })}
-                  </div>
-                </section>
-              ))}
+                          <div className="mt-3 grid gap-2 pb-2">
+                            {group.items.map((item) => {
+                              const className = [
+                                "focus-hbf rounded-md px-3 py-2.5 transition",
+                                !item.external && pathname === item.href
+                                  ? "bg-hbf-green/10 text-hbf-green"
+                                  : "text-hbf-dark hover:bg-hbf-cream",
+                              ].join(" ");
+
+                              const content = (
+                                <>
+                                  <span className="block text-sm font-semibold">{item.label}</span>
+                                  {item.description ? (
+                                    <span className="mt-0.5 block text-xs leading-5 text-slate-500">{item.description}</span>
+                                  ) : null}
+                                </>
+                              );
+
+                              return item.external ? (
+                                <a
+                                  key={item.label}
+                                  href={item.href}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className={className}
+                                  onClick={() => setIsOpen(false)}
+                                >
+                                  {content}
+                                </a>
+                              ) : (
+                                <Link key={item.href} href={item.href} className={className} onClick={() => setIsOpen(false)}>
+                                  {content}
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </section>
+                );
+              })}
+              
+              <div className="mt-8 pb-4">
+                <Link
+                  href="/scholarship-application"
+                  className="flex w-full items-center justify-center rounded-full bg-[#FFB347] px-6 py-4 text-[15px] font-bold text-hbf-dark shadow-soft transition-transform hover:scale-[1.02] hover:bg-[#ffb95e]"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Apply for a scholarship
+                </Link>
+              </div>
             </div>
           </motion.div>
         ) : null}

@@ -61,20 +61,20 @@ export function Stats() {
               </p>
             </div>
 
-            <div className="space-y-10">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-1 md:gap-y-10">
               {impactData.map((stat) => (
                 <div 
                   key={stat.label}
-                  className="flex items-center gap-6"
+                  className="flex items-start gap-3 sm:gap-6 md:items-center"
                 >
-                  <div className={`flex-shrink-0 ${stat.color}`}>
-                    <stat.icon size={36} strokeWidth={2.5} />
+                  <div className={`flex-shrink-0 mt-1 md:mt-0 ${stat.color}`}>
+                    <stat.icon className="h-8 w-8 sm:h-9 sm:w-9" strokeWidth={2.5} />
                   </div>
                   <div>
                     <h3 className={`text-4xl md:text-5xl font-bold ${stat.color} leading-none font-[family-name:var(--font-patrick-hand)]`}>
                       {stat.value}
                     </h3>
-                    <p className="text-hbf-dark font-bold text-xl md:text-2xl mt-1 font-[family-name:var(--font-patrick-hand)]">
+                    <p className="text-hbf-dark font-bold text-lg md:text-2xl mt-1 font-[family-name:var(--font-patrick-hand)] leading-tight">
                       {stat.label}
                     </p>
                   </div>

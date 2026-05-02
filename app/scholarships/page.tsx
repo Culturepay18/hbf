@@ -150,17 +150,22 @@ export default function ScholarshipsPage() {
 
           <div className="mt-12 rounded-lg border border-black/8 bg-white p-5 shadow-soft">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-hbf-orange">Competition path</p>
-            <div className="mt-5 grid gap-4 text-center md:grid-cols-5">
+            <div className="mt-6 grid gap-6 md:mt-5 md:gap-4 md:grid-cols-5 md:text-center">
               {journey.map((item, index) => (
                 <div key={item} className="relative">
                   {index < journey.length - 1 ? (
-                    <div className="absolute left-1/2 top-4 hidden h-px w-full bg-black/10 md:block" />
+                    <>
+                      <div className="absolute left-1/2 top-4 hidden h-px w-full bg-black/10 md:block" />
+                      <div className="absolute bottom-[-24px] left-[15px] top-8 w-px bg-black/10 md:hidden" />
+                    </>
                   ) : null}
-                  <div className="relative flex items-center gap-3 md:block">
-                    <div className="mx-auto flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-hbf-green text-sm font-bold text-white">
+                  <div className="relative flex items-start gap-4 md:block">
+                    <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-hbf-green text-sm font-bold text-white md:mx-auto">
                       {index + 1}
                     </div>
-                    <p className="text-sm font-medium leading-6 text-hbf-dark md:mx-auto md:mt-4 md:max-w-36">{item}</p>
+                    <p className="pt-1 text-left text-sm font-medium leading-6 text-hbf-dark md:mx-auto md:mt-4 md:max-w-36 md:p-0 md:text-center">
+                      {item}
+                    </p>
                   </div>
                 </div>
               ))}

@@ -34,13 +34,13 @@ export function Contact() {
                 </div>
                 <span className="text-lg font-medium">WhatsApp {contact.whatsapp}</span>
               </a>
-              <div className="pt-4 flex flex-col sm:flex-row gap-4">
-                <Button asChild size="lg" className="flex-1 h-14 bg-white hover:bg-white/90 text-hbf-green font-bold text-lg">
+              <div className="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl">
+                <Button asChild size="lg" className="w-full h-14 rounded-full bg-white hover:bg-white/90 text-hbf-green font-bold text-lg shadow-sm">
                   <a href={donation.href} target="_blank" rel="noreferrer">
                     Donate Now
                   </a>
                 </Button>
-                <Button asChild size="lg" className="flex-1 h-14 bg-hbf-orange hover:bg-hbf-orange-light text-white font-bold text-lg">
+                <Button asChild size="lg" className="w-full h-14 rounded-full bg-hbf-orange hover:bg-hbf-orange-light text-white font-bold text-lg shadow-sm">
                   <Link href="/scholarship-application">
                     Start an application
                     <Send aria-hidden="true" size={18} className="ml-2" />

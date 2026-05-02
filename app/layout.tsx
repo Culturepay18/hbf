@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     siteName: "Haiti Bright Futures",
     images: [
       {
-        url: "/images/hbf-logo.png",
+        url: "/images/logo-hbf-01.png",
         width: 1200,
         height: 630,
         alt: "Logo Haiti Bright Futures",
