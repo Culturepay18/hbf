@@ -145,8 +145,7 @@ export function ApplicationForm() {
         </div>
         <Button
           onClick={() => setIsSuccess(false)}
-          variant="ghost"
-          className="text-hbf-green hover:bg-hbf-green/5"
+          className="mt-4 rounded-xl bg-hbf-green px-8 py-3 font-bold text-white hover:bg-hbf-green/90"
         >
           Submit another application
         </Button>

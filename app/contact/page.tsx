@@ -45,9 +45,14 @@ export default function ContactPage() {
             <h1 className="text-3xl md:text-4xl font-bold text-hbf-dark mb-4">
               Get in Touch
             </h1>
-            <p className="text-hbf-muted mb-8">
-              Fill out the form below and your message will be sent directly to our team.
-            </p>
+            <div className="text-hbf-muted mb-8 space-y-4">
+              <p>
+                We&apos;re building real solutions with students and we&apos;re looking for partners who want to be part of that process.
+              </p>
+              <p>
+                Whether you&apos;re interested in supporting a project, sharing expertise, or helping bring an idea to life, we&apos;d love to hear from you.
+              </p>
+            </div>
 
             {status === "success" ? (
               <div className="bg-green-50 text-hbf-green p-8 rounded-3xl text-center border border-green-100">
@@ -56,7 +61,7 @@ export default function ContactPage() {
                 <p>Thank you for reaching out. We will get back to you soon.</p>
                 <Button 
                   onClick={() => setStatus("idle")} 
-                  className="mt-6 bg-hbf-green hover:bg-hbf-green-light"
+                  className="w-full h-14 mt-6 rounded-xl bg-hbf-green hover:bg-hbf-green-light text-white font-bold"
                 >
                   Send another message
                 </Button>
