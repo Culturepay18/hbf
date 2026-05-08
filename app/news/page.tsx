@@ -107,9 +107,9 @@ export default function NewsPage() {
                         </h2>
                       </Link>
 
-                      <p className="text-xs text-hbf-muted mb-6 line-clamp-2 font-medium flex-grow leading-relaxed">
-                        {article.subtitle}
-                      </p>
+                      <div className="text-xs text-hbf-muted mb-6 line-clamp-2 font-medium flex-grow leading-relaxed whitespace-pre-wrap">
+                        <ReactMarkdown>{article.subtitle}</ReactMarkdown>
+                      </div>
 
                       <Link 
                         href={`/news/${article.slug}`}

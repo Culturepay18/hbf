@@ -95,9 +95,9 @@ export default function ArticlePage() {
             </h1>
 
             {article.subtitle && (
-              <p className="text-xl md:text-2xl text-hbf-muted mb-10 leading-relaxed font-medium">
-                {article.subtitle}
-              </p>
+              <div className="text-xl md:text-2xl text-hbf-muted mb-10 leading-relaxed font-medium whitespace-pre-wrap">
+                <ReactMarkdown>{article.subtitle}</ReactMarkdown>
+              </div>
             )}
 
             <div className="flex flex-wrap items-center justify-between gap-6 py-6 border-y border-black/5 mb-12">
@@ -135,16 +135,64 @@ export default function ArticlePage() {
             </motion.div>
           )}
 
+          <style jsx global>{`
+            .article-content {
+              width: 100%;
+              max-width: 100%;
+            }
+            .article-content p {
+              margin-bottom: 1rem !important;
+              line-height: 1.6 !important;
+              display: block !important;
+              white-space: normal !important;
+              text-align: left !important;
+              overflow-wrap: break-word !important;
+              word-break: normal !important;
+            }
+            @media (min-width: 768px) {
+              .article-content p {
+                margin-bottom: 1.2rem !important;
+                line-height: 1.7 !important;
+              }
+            }
+            .article-content img {
+              margin: 1.5rem 0 !important;
+              width: 100% !important;
+              height: auto !important;
+              display: block;
+            }
+            .article-content strong {
+              font-weight: bold;
+              color: #1a1a1a;
+            }
+          `}</style>
+
+
+
+
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="prose prose-xl max-w-none prose-h2:text-4xl prose-h2:font-bold prose-h2:text-hbf-dark prose-h2:mt-16 prose-h3:text-3xl prose-h3:font-bold prose-p:text-hbf-muted prose-p:leading-relaxed prose-strong:text-hbf-dark prose-strong:font-bold prose-a:text-hbf-green prose-a:font-bold prose-img:rounded-[2rem] prose-img:shadow-xl"
+            className="prose prose-lg md:prose-xl max-w-none mt-12
+              prose-h2:text-3xl md:prose-h2:text-4xl prose-h2:font-bold prose-h2:text-hbf-dark prose-h2:mt-12 
+              prose-h3:text-2xl md:prose-h3:text-3xl prose-h3:font-bold 
+              prose-p:text-hbf-muted prose-strong:text-hbf-dark prose-strong:font-bold 
+              prose-a:text-hbf-green prose-a:font-bold 
+              prose-img:rounded-none prose-img:border prose-img:border-black/5"
           >
-            <ReactMarkdown>
-              {article.content}
-            </ReactMarkdown>
+            {article.content.startsWith("<") ? (
+              <div className="article-content" dangerouslySetInnerHTML={{ __html: article.content }} />
+            ) : (
+              <div className="article-content">
+                <ReactMarkdown>{article.content}</ReactMarkdown>
+              </div>
+            )}
           </motion.div>
+
+
+
+
 
           {/* Read Next Section */}
           {relatedArticles.length > 0 && (

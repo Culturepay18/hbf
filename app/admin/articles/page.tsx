@@ -5,14 +5,16 @@ import { Plus, Edit2, Trash2, Eye, EyeOff, Save, X, Image as ImageIcon } from "l
 import { supabase } from "@/lib/supabase";
 import dynamic from "next/dynamic";
 import { MediaGallery } from "@/components/admin/MediaGallery";
+import "react-quill-new/dist/quill.snow.css";
 
-// Dynamic import for MDEditor to avoid SSR issues
-const MDEditor = dynamic(
-  () => import("@uiw/react-md-editor").then((mod) => mod.default),
+// Dynamic import for ReactQuill to avoid SSR issues
+const ReactQuill = dynamic(
+  () => import("react-quill-new"),
   { ssr: false }
 );
 
 interface Article {
+
   id: string;
   title: string;
   subtitle: string;
@@ -290,15 +292,15 @@ export default function AdminArticles() {
 
                   <div>
                     <label className={lbl}>Description (Content)</label>
-                    <div className="border border-black/10 rounded-[1.5rem] overflow-hidden">
-                      <MDEditor
+                    <div className="border border-black/10 rounded-[1.5rem] overflow-hidden bg-white min-h-[400px]">
+                      <ReactQuill
+                        theme="snow"
                         value={formData.content || ""}
                         onChange={(val) => setFormData({ ...formData, content: val })}
-                        preview="edit"
-                        height={350}
+                        className="h-[350px] mb-12"
                       />
                     </div>
-                    <p className="mt-2 text-[10px] text-hbf-muted font-medium">You can use Markdown for formatting (Bold, Italic, Links).</p>
+                    <p className="mt-2 text-[10px] text-hbf-muted font-medium italic">Use the toolbar above to style your text. No more codes!</p>
                   </div>
                 </div>
               </div>
