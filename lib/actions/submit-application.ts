@@ -1,12 +1,13 @@
 "use server";
 
 import { google } from "googleapis";
-import { Resend } from "resend";
+import { Resend, type CreateEmailOptions } from "resend";
 import { z } from "zod";
 
 import { getGoogleConfig } from "@/lib/google-config";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const DEFAULT_FROM_ADDRESS = "Haiti Bright Futures <onboarding@resend.dev>";
+const DEFAULT_NOTIFICATION_EMAIL = "info@hbfhaiti.org";
 
 const schema = z.object({
   firstName: z.string().min(2, "First name is required"),
@@ -49,6 +50,50 @@ function escapeHtml(value: string) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function getContextErrorDetails(message: string, context: string) {
+  const prefix = `${context}:`;
+  return message.startsWith(prefix) ? message.slice(prefix.length).trim() : message;
+}
+
+function parseEmailList(value: string | undefined) {
+  if (!value) return [];
+
+  return value
+    .split(/[,;]/)
+    .map((email) => email.trim())
+    .filter(Boolean);
+}
+
+function getNotificationRecipients() {
+  const configured = parseEmailList(process.env.APPLICATION_NOTIFICATION_TO);
+  if (configured.length > 0) return configured;
+  return [DEFAULT_NOTIFICATION_EMAIL];
+}
+
+function getFromAddress() {
+  return process.env.RESEND_FROM_EMAIL?.trim() || DEFAULT_FROM_ADDRESS;
+}
+
+function getResendClient() {
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  return apiKey ? new Resend(apiKey) : null;
+}
+
+async function sendEmailOrThrow(resend: Resend, payload: CreateEmailOptions, context: string) {
+  const { data, error } = await resend.emails.send(payload);
+
+  if (error) {
+    const details = error.statusCode ? `${error.message} (status ${error.statusCode})` : error.message;
+    throw new Error(`${context}: ${details}`);
+  }
+
+  if (!data?.id) {
+    throw new Error(`${context}: provider returned no email id`);
+  }
+
+  return data.id;
 }
 
 export async function submitApplication(formData: FormData) {
@@ -126,54 +171,87 @@ export async function submitApplication(formData: FormData) {
       console.warn("Google Sheets credentials missing, skipping sheet update.");
     }
 
-    if (process.env.RESEND_API_KEY) {
+    const resend = getResendClient();
+
+    if (resend) {
       const applicantName = `${validatedData.firstName} ${validatedData.lastName}`;
       const attachments = await Promise.all(
         [essay, studentNifFile, photo].filter((file): file is File => Boolean(file)).map(fileToAttachment),
       );
 
-      await resend.emails.send({
-        from: "Haiti Bright Futures <onboarding@resend.dev>",
-        to: "info@hbfhaiti.org",
-        subject: "New Application Submission from Haiti Bright Futures",
-        html: `
-          <h2>New scholarship application</h2>
-          <p><strong>Application ID:</strong> ${escapeHtml(applicationId)}</p>
-          <p><strong>Name:</strong> ${escapeHtml(applicantName)}</p>
-          <p><strong>Date of birth:</strong> ${escapeHtml(validatedData.dateOfBirth)}</p>
-          <p><strong>School:</strong> ${escapeHtml(validatedData.school)}</p>
-          <p><strong>Current grade:</strong> ${escapeHtml(validatedData.grade)}</p>
-          <p><strong>Address:</strong> ${escapeHtml(validatedData.address)}</p>
-          <p><strong>Phone:</strong> ${escapeHtml(validatedData.phone)}</p>
-          <p><strong>Email:</strong> ${escapeHtml(validatedData.email)}</p>
-          <p><strong>Sex:</strong> ${escapeHtml(validatedData.sex)}</p>
-          <p><strong>NIF/CIN:</strong> ${escapeHtml(validatedData.nifCin)}</p>
-          <p><strong>Guardian:</strong> ${escapeHtml(validatedData.guardianName)}</p>
-          <p><strong>Guardian phone:</strong> ${escapeHtml(validatedData.guardianPhone)}</p>
-          <p><strong>Guardian email:</strong> ${escapeHtml(validatedData.guardianEmail)}</p>
-          <p><strong>Consent:</strong> Granted</p>
-        `,
-        attachments,
-      });
+      await sendEmailOrThrow(
+        resend,
+        {
+          from: getFromAddress(),
+          to: getNotificationRecipients(),
+          replyTo: validatedData.email,
+          subject: "New Application Submission from Haiti Bright Futures",
+          html: `
+            <h2>New scholarship application</h2>
+            <p><strong>Application ID:</strong> ${escapeHtml(applicationId)}</p>
+            <p><strong>Name:</strong> ${escapeHtml(applicantName)}</p>
+            <p><strong>Date of birth:</strong> ${escapeHtml(validatedData.dateOfBirth)}</p>
+            <p><strong>School:</strong> ${escapeHtml(validatedData.school)}</p>
+            <p><strong>Current grade:</strong> ${escapeHtml(validatedData.grade)}</p>
+            <p><strong>Address:</strong> ${escapeHtml(validatedData.address)}</p>
+            <p><strong>Phone:</strong> ${escapeHtml(validatedData.phone)}</p>
+            <p><strong>Email:</strong> ${escapeHtml(validatedData.email)}</p>
+            <p><strong>Sex:</strong> ${escapeHtml(validatedData.sex)}</p>
+            <p><strong>NIF/CIN:</strong> ${escapeHtml(validatedData.nifCin)}</p>
+            <p><strong>Guardian:</strong> ${escapeHtml(validatedData.guardianName)}</p>
+            <p><strong>Guardian phone:</strong> ${escapeHtml(validatedData.guardianPhone)}</p>
+            <p><strong>Guardian email:</strong> ${escapeHtml(validatedData.guardianEmail)}</p>
+            <p><strong>Consent:</strong> Granted</p>
+          `,
+          attachments,
+        },
+        "Failed to send admin notification email",
+      );
 
-      await resend.emails.send({
-        from: "Haiti Bright Futures <onboarding@resend.dev>",
-        to: validatedData.email,
-        subject: "Confirmation de votre soumission",
-        html: `
-          <p>Cher candidat,</p>
-          <p>Nous vous remercions d'avoir soumis votre candidature pour la bourse Haiti Bright Futures.</p>
-          <p>Votre identifiant de candidature est <strong>#${escapeHtml(applicationId)}</strong>.</p>
-          <p>Notre comite d'examen evaluera votre candidature et les candidats retenus seront contactes pour la prochaine etape.</p>
-          <p>Cordialement,<br>Comite des bourses Haiti Bright Futures</p>
-        `,
-      });
+      await sendEmailOrThrow(
+        resend,
+        {
+          from: getFromAddress(),
+          to: validatedData.email,
+          replyTo: getNotificationRecipients(),
+          subject: "Confirmation de votre soumission",
+          html: `
+            <p>Cher candidat,</p>
+            <p>Nous vous remercions d'avoir soumis votre candidature pour la bourse Haiti Bright Futures.</p>
+            <p>Votre identifiant de candidature est <strong>#${escapeHtml(applicationId)}</strong>.</p>
+            <p>Notre comite d'examen evaluera votre candidature et les candidats retenus seront contactes pour la prochaine etape.</p>
+            <p>Cordialement,<br>Comite des bourses Haiti Bright Futures</p>
+          `,
+        },
+        "Failed to send applicant confirmation email",
+      );
     } else {
-      console.warn("Resend API Key missing, skipping application emails.");
+      console.warn("Resend API key missing, skipping application emails.");
     }
-
     return { success: true };
   } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+
+    if (message.includes("Failed to send admin notification email")) {
+      const details = getContextErrorDetails(message, "Failed to send admin notification email");
+      return {
+        success: false,
+        error: `Application saved but admin notification email failed: ${details}`,
+      };
+    }
+
+    if (message.includes("Failed to send applicant confirmation email")) {
+      const details = getContextErrorDetails(message, "Failed to send applicant confirmation email");
+      return {
+        success: false,
+        error: `Application saved but confirmation email failed: ${details}`,
+      };
+    }
+
+    if (error instanceof z.ZodError) {
+      return { success: false, error: error.issues[0]?.message || "Validation error" };
+    }
+
     console.error("Submission error:", error);
     return { success: false, error: "An error occurred during submission. Please try again." };
   }
