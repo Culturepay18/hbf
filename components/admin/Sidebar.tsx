@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutDashboard, FileText, Lightbulb, GraduationCap, Users, Settings, LogOut, RefreshCw, Trophy } from "lucide-react";
+import { LayoutDashboard, FileText, Lightbulb, GraduationCap, Users, Settings, LogOut, RefreshCw, Trophy, School } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -15,9 +15,11 @@ const navigation = [
   { name: "Lab Projects", href: "/admin/projects", icon: Lightbulb },
   { name: "Site Stats", href: "/admin/stats", icon: RefreshCw },
   { name: "Scholarships", href: "/admin/scholarships", icon: GraduationCap },
+  { name: "Partner Schools", href: "/admin/schools", icon: School },
   { name: "Users", href: "/admin/users", icon: Users },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
+
 
 export function Sidebar() {
   const pathname = usePathname();

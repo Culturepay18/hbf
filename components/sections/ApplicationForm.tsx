@@ -9,6 +9,7 @@ import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
 import { submitApplication } from "@/lib/actions/submit-application";
+import { supabase } from "@/lib/supabase";
 
 const requiredFile = (message: string) =>
   z
@@ -21,7 +22,7 @@ const schema = z.object({
   firstName: z.string().min(2, "First name is required"),
   lastName: z.string().min(2, "Last name is required"),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
-  school: z.string().min(2, "School is required"),
+  school: z.string().min(1, "Please select your school"),
   grade: z.string().min(1, "Current grade is required"),
   address: z.string().min(5, "Address is required"),
   phone: z.string().min(8, "Phone number is required"),
@@ -81,6 +82,20 @@ export function ApplicationForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [schools, setSchools] = useState<{ name: string }[]>([]);
+
+  useEffect(() => {
+    async function fetchSchools() {
+      const { data } = await supabase
+        .from("partner_schools")
+        .select("name")
+        .eq("is_active", true)
+        .order("name");
+      
+      if (data) setSchools(data);
+    }
+    fetchSchools();
+  }, []);
 
   const {
     register,
@@ -259,8 +274,14 @@ export function ApplicationForm() {
           >
             <div className="space-y-2">
               <label className="text-sm font-semibold text-hbf-dark">School</label>
-              <input {...register("school")} className={inputClass(Boolean(errors.school))} placeholder="School" />
+              <select {...register("school")} className={inputClass(Boolean(errors.school))}>
+                <option value="">Select your school</option>
+                {schools.map((s) => (
+                  <option key={s.name} value={s.name}>{s.name}</option>
+                ))}
+              </select>
               <FieldError message={errors.school?.message} />
+              <p className="text-[10px] text-hbf-muted italic mt-1">Only students from partner schools can apply. Contact us if your school is missing.</p>
             </div>
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="space-y-2">

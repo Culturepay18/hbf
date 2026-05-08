@@ -119,7 +119,7 @@ function FAQAccordion({ items }: { items: { q: string, a: string }[] }) {
 export default function ScholarshipsPage() {
   const [scholarships, setScholarships] = useState<Scholarship[]>([]);
   const [stats, setStats] = useState<Stat[]>([]);
-  const [finalistProjects, setFinalistProjects] = useState<Project[]>([]);
+  const [partnerSchools, setPartnerSchools] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -142,11 +142,23 @@ export default function ScholarshipsPage() {
         ]);
       }
 
+      // Fetch Partner Schools
+      const { data: pSchools, error: pError } = await supabase
+        .from("partner_schools")
+        .select("*")
+        .eq("is_active", true)
+        .order("name");
+      
+      if (pError) console.error("Error fetching schools:", pError);
+      if (pSchools) setPartnerSchools(pSchools);
+
       setIsLoading(false);
     }
 
+
     fetchData();
   }, []);
+
 
   const getIcon = (name: string) => {
     switch (name) {
@@ -347,32 +359,39 @@ export default function ScholarshipsPage() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              "Collège pratique du Nord",
-              "Institution Académie Chrétienne (IACQM)",
-              "Ecole du Sacre cœur (FDM)",
-              "COLLEGE MODÈLE",
-              "Centre de formation classique",
-              "ECOLE MARIE IMMACULEE"
-            ].map((school, i) => (
-              <motion.div 
-                key={i} 
-                whileHover={{ y: -10 }}
-                className="bg-white p-10 rounded-[2.5rem] border border-black/5 flex flex-col gap-6 shadow-sm hover:shadow-2xl transition-all duration-500"
-              >
-                <div className="w-14 h-14 rounded-2xl bg-[#f8f6f0] flex items-center justify-center text-hbf-dark font-black text-xl">
-                  {i + 1}
-                </div>
-                <div>
-                  <p className="text-2xl font-bold text-hbf-dark leading-tight">{school}</p>
-                  <div className="mt-4 flex items-center gap-2">
-                    <MapPin size={14} className="text-hbf-green" />
-                    <span className="text-[10px] font-bold text-hbf-muted uppercase tracking-widest">Cap-Haïtien, Nord</span>
+            {partnerSchools.length > 0 ? (
+              partnerSchools.map((school, i) => (
+                <motion.div 
+                  key={school.id} 
+                  whileHover={{ y: -10 }}
+                  className="bg-white p-10 rounded-[2.5rem] border border-black/5 flex flex-col gap-6 shadow-sm hover:shadow-2xl transition-all duration-500"
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-[#f8f6f0] flex items-center justify-center text-hbf-dark font-black text-xl">
+                    {i + 1}
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                  <div>
+                    <p className="text-2xl font-bold text-hbf-dark leading-tight">{school.name}</p>
+                    <div className="mt-4 flex items-center gap-2">
+                      <MapPin size={14} className="text-hbf-green" />
+                      <span className="text-[10px] font-bold text-hbf-muted uppercase tracking-widest">{school.location || 'Cap-Haïtien, Nord'}</span>
+                    </div>
+                  </div>
+                </motion.div>
+              ))
+            ) : (
+              // Fallback/Empty State
+              <div className="col-span-full py-20 text-center bg-white rounded-[2.5rem] border border-dashed border-black/10">
+                <School className="mx-auto text-hbf-muted/30 mb-4" size={48} />
+                <p className="text-xl font-bold text-hbf-dark mb-2">No partner schools registered yet</p>
+                <p className="text-hbf-muted mb-8 max-w-md mx-auto">We are currently updating our network. Please check back soon or contact your school director.</p>
+                <Link href="/admin/schools" className="inline-flex items-center gap-2 text-hbf-green font-bold hover:underline">
+                   Admin: Add schools here <ArrowRight size={16} />
+                </Link>
+              </div>
+            )}
+
           </div>
+
         </div>
       </section>
 
