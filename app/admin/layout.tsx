@@ -21,7 +21,6 @@ export default function AdminLayout({
 
         {/* Main Content Area */}
         <div className="flex w-0 flex-1 flex-col overflow-hidden">
-          {/* Topbar (Mobile Hamburger etc. can go here later if needed) */}
           <main className="relative flex-1 overflow-y-auto focus:outline-none">
             <div className="py-8">
               <div className="mx-auto max-w-7xl px-4 sm:px-6 md:px-8">

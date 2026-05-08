@@ -1,29 +1,35 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
+import { supabase } from "@/lib/supabase";
 
-const projects = [
-  {
-    team: "Green Haiti",
-    problem: "Excess plastic waste in Cap-Haitien streets.",
-    solution: "Community-led recycling centers with incentive programs.",
-    budget: "$2,500",
-    impact: "10 tons of plastic removed annually."
-  },
-  {
-    team: "Eco-Light",
-    problem: "Lack of affordable lighting for students at night.",
-    solution: "Solar-powered lamps built from recycled materials.",
-    budget: "$1,800",
-    impact: "200 students benefited."
-  }
-];
+interface Project {
+  title: string;
+  problem: string;
+  solution: string;
+  budget: string;
+  impact: string;
+}
 
 export function ProjectPreview() {
+  const [projects, setProjects] = useState<Project[]>([]);
+
+  useEffect(() => {
+    async function fetchFinalists() {
+      const { data } = await supabase
+        .from("competition_finalists")
+        .select("*")
+        .eq("is_active", true)
+        .limit(2);
+      if (data) setProjects(data);
+    }
+    fetchFinalists();
+  }, []);
   return (
     <section className="py-24 bg-white">
       <div className="container mx-auto px-4">
@@ -66,7 +72,7 @@ export function ProjectPreview() {
         <div className="grid md:grid-cols-2 gap-10">
           {projects.map((project, index) => (
             <motion.div
-              key={project.team}
+              key={project.title}
               initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -78,7 +84,7 @@ export function ProjectPreview() {
                 </Badge>
                 
                 <h4 className="text-2xl md:text-3xl font-bold text-hbf-dark mb-8">
-                  Team: {project.team}
+                  Team: {project.title}
                 </h4>
               </div>
 

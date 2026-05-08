@@ -135,7 +135,7 @@ export default function AdminArticles() {
         </button>
       </div>
 
-      {/* Table */}
+      {/* Articles Grid (Card Format) */}
       {isLoading ? (
         <div className="flex justify-center py-24">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-hbf-green border-t-transparent" />
@@ -146,63 +146,70 @@ export default function AdminArticles() {
           <p className="mt-2 text-hbf-muted">Get started by creating your first article.</p>
         </div>
       ) : (
-        <div className="rounded-[2.5rem] border border-black/5 bg-white shadow-soft overflow-hidden">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-[#f8f6f0] text-xs uppercase tracking-widest text-hbf-dark">
-              <tr>
-                <th className="px-8 py-5 font-bold">Preview</th>
-                <th className="px-8 py-5 font-bold">Title & Subtitle</th>
-                <th className="px-8 py-5 font-bold">Status</th>
-                <th className="px-8 py-5 text-right font-bold">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-black/5">
-              {articles.map((item) => (
-                <tr key={item.id} className="transition-colors hover:bg-black/[0.01]">
-                  <td className="px-8 py-4">
-                    <div className="w-20 h-14 rounded-xl overflow-hidden bg-hbf-cream border border-black/5">
-                      {item.cover_image ? (
-                        <img src={item.cover_image} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-hbf-muted">
-                          <ImageIcon size={18} />
-                        </div>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-8 py-4">
-                    <div className="max-w-md">
-                      <p className="font-bold text-hbf-dark text-base line-clamp-1">{item.title}</p>
-                      <p className="text-hbf-muted text-xs line-clamp-1">{item.subtitle || "No subtitle"}</p>
-                    </div>
-                  </td>
-                  <td className="px-8 py-4">
-                    <button onClick={() => toggleVisibility(item.id, item.is_published)} className="flex items-center gap-2 group">
-                      {item.is_published ? (
-                        <div className="flex items-center gap-2 px-3 py-1 bg-hbf-green/10 text-hbf-green rounded-full font-bold text-xs group-hover:bg-hbf-green/20">
-                          <Eye size={14} /> Published
-                        </div>
-                      ) : (
-                        <div className="flex items-center gap-2 px-3 py-1 bg-hbf-orange/10 text-hbf-orange rounded-full font-bold text-xs group-hover:bg-hbf-orange/20">
-                          <EyeOff size={14} /> Draft
-                        </div>
-                      )}
-                    </button>
-                  </td>
-                  <td className="px-8 py-4">
-                    <div className="flex justify-end gap-3">
-                      <button onClick={() => openEditModal(item)} className="p-2.5 rounded-xl bg-hbf-cream text-hbf-dark hover:bg-hbf-dark hover:text-white transition-all">
-                        <Edit2 size={18} />
-                      </button>
-                      <button onClick={() => handleDelete(item.id)} className="p-2.5 rounded-xl bg-red-50 text-red-400 hover:bg-red-500 hover:text-white transition-all">
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {articles.map((item) => (
+            <div key={item.id} className="group relative flex flex-col rounded-none border border-black/5 bg-white transition-all hover:bg-hbf-cream/30 overflow-hidden">
+              {/* Image Container */}
+              <div className="relative aspect-[16/10] overflow-hidden bg-hbf-cream rounded-none">
+                {item.cover_image ? (
+                  <img src={item.cover_image} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-hbf-muted">
+                    <ImageIcon size={48} />
+                  </div>
+                )}
+                
+                {/* Status Badge Overlay */}
+                <div className="absolute top-4 left-4">
+                  <button onClick={() => toggleVisibility(item.id, item.is_published)}>
+                    {item.is_published ? (
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-hbf-green text-white rounded-none font-bold text-[10px] uppercase tracking-wider">
+                        <Eye size={12} /> Published
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-hbf-orange text-white rounded-none font-bold text-[10px] uppercase tracking-wider">
+                        <EyeOff size={12} /> Draft
+                      </div>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="flex-grow p-6">
+                <div className="mb-3 flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-hbf-muted">
+                  <span>Blog Post</span>
+                  <span className="h-1 w-1 rounded-full bg-black/20" />
+                  <span>By HBF Team</span>
+                </div>
+                <h3 className="text-lg font-bold text-hbf-dark line-clamp-2 leading-tight mb-2 transition-colors">
+                  {item.title}
+                </h3>
+                <p className="text-xs text-hbf-muted line-clamp-2 leading-relaxed">
+                  {item.subtitle || "No introduction provided for this article."}
+                </p>
+              </div>
+
+              {/* Footer Actions */}
+              <div className="mt-auto p-6 flex items-center justify-between border-t border-black/5">
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => openEditModal(item)}
+                    className="flex items-center gap-2 px-4 py-2 rounded-none bg-hbf-dark text-white font-bold text-[10px] uppercase tracking-wider hover:bg-hbf-green transition-all"
+                  >
+                    <Edit2 size={12} /> Edit
+                  </button>
+                </div>
+                <button 
+                  onClick={() => handleDelete(item.id)}
+                  className="p-2 rounded-none text-red-400 hover:bg-red-500 hover:text-white transition-all"
+                  title="Delete Article"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 

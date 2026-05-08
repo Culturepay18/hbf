@@ -39,6 +39,7 @@ export default function AdminProjects() {
     const { data } = await supabase
       .from("innovation_projects")
       .select("*")
+      .neq("status", "Finalist Team") // Exclude finalists from this general lab page
       .order("created_at", { ascending: false });
     if (data) setProjects(data);
     setIsLoading(false);
@@ -238,6 +239,7 @@ export default function AdminProjects() {
                   <label className={lbl}>Status</label>
                   <select value={formData.status || "Active Project"} onChange={(e) => setFormData({ ...formData, status: e.target.value })} className={inp}>
                     <option value="Active Project">Active Project</option>
+                    <option value="Finalist Team">Finalist Team</option>
                     <option value="Future Student Project">Future Student Project</option>
                     <option value="Completed">Completed</option>
                   </select>

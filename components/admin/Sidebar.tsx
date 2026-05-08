@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutDashboard, FileText, Lightbulb, GraduationCap, Users, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, FileText, Lightbulb, GraduationCap, Users, Settings, LogOut, RefreshCw, Trophy } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,7 +11,9 @@ import { useAuth } from "./AuthProvider";
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "Articles & News", href: "/admin/articles", icon: FileText },
-  { name: "Innovation Lab", href: "/admin/projects", icon: Lightbulb },
+  { name: "Finalist Teams", href: "/admin/finalists", icon: Trophy },
+  { name: "Lab Projects", href: "/admin/projects", icon: Lightbulb },
+  { name: "Site Stats", href: "/admin/stats", icon: RefreshCw },
   { name: "Scholarships", href: "/admin/scholarships", icon: GraduationCap },
   { name: "Users", href: "/admin/users", icon: Users },
   { name: "Settings", href: "/admin/settings", icon: Settings },
@@ -39,10 +41,7 @@ export function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 space-y-1 px-4 py-6">
         {navigation.map((item) => {
-          const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
-          // Exception for Dashboard so it doesn't stay active on other routes
-          const isDashboard = item.href === "/admin";
-          const actuallyActive = isDashboard ? pathname === "/admin" : isActive;
+          const isActive = pathname === item.href || (item.href !== "/admin" && pathname.startsWith(item.href));
 
           return (
             <Link
@@ -50,7 +49,7 @@ export function Sidebar() {
               href={item.href}
               className={cn(
                 "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
-                actuallyActive
+                isActive
                   ? "bg-hbf-green text-white"
                   : "text-white/70 hover:bg-white/10 hover:text-white"
               )}
@@ -58,7 +57,7 @@ export function Sidebar() {
               <item.icon
                 className={cn(
                   "h-5 w-5 shrink-0 transition-colors",
-                  actuallyActive ? "text-white" : "text-white/50 group-hover:text-white"
+                  isActive ? "text-white" : "text-white/50 group-hover:text-white"
                 )}
               />
               {item.name}

@@ -1,82 +1,170 @@
-import { FileText, Lightbulb, GraduationCap, Users } from "lucide-react";
-import Link from "next/link";
+"use client";
 
 export const dynamic = "force-dynamic";
 
-const stats = [
-  { name: "Total Articles", stat: "12", icon: FileText, color: "text-blue-500", bg: "bg-blue-50" },
-  { name: "Active Projects", stat: "4", icon: Lightbulb, color: "text-amber-500", bg: "bg-amber-50" },
-  { name: "Open Scholarships", stat: "1", icon: GraduationCap, color: "text-hbf-green", bg: "bg-hbf-green/10" },
-  { name: "Admin Users", stat: "3", icon: Users, color: "text-purple-500", bg: "bg-purple-50" },
-];
+import { useEffect, useState } from "react";
+import { 
+  FileText, 
+  Lightbulb, 
+  GraduationCap, 
+  Users, 
+  ArrowUpRight, 
+  ArrowDownRight,
+  Loader2
+} from "lucide-react";
+import { supabase } from "@/lib/supabase";
+
+interface Stats {
+  articles: number;
+  projects: number;
+  scholarships: number;
+  users: number;
+}
 
 export default function AdminDashboard() {
-  return (
-    <div>
-      <h1 className="text-3xl font-bold text-hbf-dark">Dashboard</h1>
-      <p className="mt-2 text-hbf-muted">Overview of Haiti Bright Futures content and metrics.</p>
+  const [stats, setStats] = useState<Stats>({
+    articles: 0,
+    projects: 0,
+    scholarships: 0,
+    users: 0
+  });
+  const [isLoading, setIsLoading] = useState(true);
 
-      {/* Stats Grid */}
-      <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((item) => (
-          <div
-            key={item.name}
-            className="relative overflow-hidden rounded-2xl bg-white p-6 shadow-soft transition-all hover:shadow-lg"
-          >
-            <div className="flex items-center gap-4">
-              <div className={`flex h-14 w-14 items-center justify-center rounded-xl ${item.bg}`}>
-                <item.icon className={`h-7 w-7 ${item.color}`} aria-hidden="true" />
+  useEffect(() => {
+    async function fetchDashboardStats() {
+      setIsLoading(true);
+      
+      // Fetch Articles Count
+      const { count: articlesCount } = await supabase
+        .from("articles")
+        .select("*", { count: "exact", head: true });
+      
+      // Fetch Projects Count
+      const { count: projectsCount } = await supabase
+        .from("innovation_projects")
+        .select("*", { count: "exact", head: true });
+      
+      // Fetch Open Scholarships Count
+      const { count: scholarshipsCount } = await supabase
+        .from("scholarships")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "Open");
+      
+      // Fetch Users Count
+      const { count: usersCount } = await supabase
+        .from("profiles")
+        .select("*", { count: "exact", head: true });
+
+      setStats({
+        articles: articlesCount || 0,
+        projects: projectsCount || 0,
+        scholarships: scholarshipsCount || 0,
+        users: usersCount || 0
+      });
+      
+      setIsLoading(false);
+    }
+
+    fetchDashboardStats();
+  }, []);
+
+  const cards = [
+    { 
+      label: "Total Articles", 
+      value: stats.articles, 
+      icon: FileText, 
+      color: "bg-blue-500", 
+      trend: "+2 this week", 
+      isUp: true 
+    },
+    { 
+      label: "Active Projects", 
+      value: stats.projects, 
+      icon: Lightbulb, 
+      color: "bg-hbf-orange", 
+      trend: "Innovation Lab", 
+      isUp: true 
+    },
+    { 
+      label: "Open Scholarships", 
+      value: stats.scholarships, 
+      icon: GraduationCap, 
+      color: "bg-hbf-green", 
+      trend: "Currently accepting", 
+      isUp: true 
+    },
+    { 
+      label: "Admin Users", 
+      value: stats.users, 
+      icon: Users, 
+      color: "bg-purple-500", 
+      trend: "Team members", 
+      isUp: true 
+    },
+  ];
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader2 className="animate-spin text-hbf-green" size={48} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold text-hbf-dark">Dashboard Overview</h1>
+        <p className="mt-1 text-hbf-muted">Welcome back! Here&apos;s what&apos;s happening with HBF today.</p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        {cards.map((card) => (
+          <div key={card.label} className="relative overflow-hidden rounded-2xl border border-black/5 bg-white p-5 shadow-soft transition-all hover:shadow-lg group">
+            <div className="flex items-center justify-between">
+              <div className={`rounded-xl ${card.color} p-2.5 text-white transition-transform group-hover:scale-105`}>
+                <card.icon size={20} />
               </div>
-              <div>
-                <p className="truncate text-sm font-medium text-hbf-muted">{item.name}</p>
-                <p className="mt-1 text-3xl font-bold text-hbf-dark">{item.stat}</p>
+              <div className={`flex items-center gap-1 text-[10px] font-bold ${card.isUp ? "text-hbf-green" : "text-red-500"}`}>
+                {card.trend}
+                {card.isUp ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
               </div>
+            </div>
+            <div className="mt-5">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-hbf-muted">{card.label}</p>
+              <h3 className="mt-0.5 text-3xl font-black text-hbf-dark tracking-tight">{card.value}</h3>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Quick Actions & Recent Activity */}
-      <div className="mt-10 grid grid-cols-1 gap-8 lg:grid-cols-2">
-        {/* Quick Actions */}
-        <div className="rounded-2xl border border-black/5 bg-white p-6 shadow-soft">
-          <h2 className="text-xl font-bold text-hbf-dark">Quick Actions</h2>
-          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Link
-              href="/admin/articles"
-              className="flex items-center justify-center gap-2 rounded-xl bg-hbf-dark px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-hbf-dark/90"
-            >
-              <FileText size={18} />
-              Post New Article
-            </Link>
-            <Link
-              href="/admin/scholarships"
-              className="flex items-center justify-center gap-2 rounded-xl bg-hbf-green px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-hbf-green-light"
-            >
-              <GraduationCap size={18} />
-              Manage Scholarships
-            </Link>
+      {/* Quick Actions / Recent Activity Placeholder */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="rounded-[2.5rem] border border-black/5 bg-white p-8 shadow-soft">
+          <h3 className="text-xl font-bold text-hbf-dark mb-6">Recent Activity</h3>
+          <div className="space-y-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex items-center gap-4 border-b border-black/5 pb-4 last:border-0 last:pb-0">
+                <div className="h-10 w-10 rounded-full bg-hbf-cream flex items-center justify-center text-hbf-dark font-bold">
+                  {i}
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-hbf-dark">Content updated successfully</p>
+                  <p className="text-xs text-hbf-muted">Your latest changes are now live on the website.</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Global Settings Status */}
-        <div className="rounded-2xl border border-black/5 bg-white p-6 shadow-soft">
-          <h2 className="text-xl font-bold text-hbf-dark">System Status</h2>
-          <div className="mt-6">
-            <div className="flex items-center justify-between rounded-xl border border-black/5 p-4">
-              <div>
-                <p className="font-semibold text-hbf-dark">Scholarship Submissions</p>
-                <p className="text-sm text-hbf-muted">Currently accepting new applications</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="relative flex h-3 w-3">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-hbf-green opacity-75"></span>
-                  <span className="relative inline-flex h-3 w-3 rounded-full bg-hbf-green"></span>
-                </span>
-                <span className="text-sm font-bold text-hbf-green">Active</span>
-              </div>
-            </div>
+        <div className="rounded-[2.5rem] border border-black/5 bg-hbf-dark p-8 shadow-soft text-white flex flex-col justify-between">
+          <div>
+            <h3 className="text-xl font-bold mb-2">Need help?</h3>
+            <p className="text-white/60 text-sm mb-8">Access the documentation or contact support for assistance with the CMS.</p>
           </div>
+          <button className="w-full py-4 rounded-2xl bg-white text-hbf-dark font-bold text-sm hover:bg-hbf-cream transition-colors">
+            View Documentation
+          </button>
         </div>
       </div>
     </div>

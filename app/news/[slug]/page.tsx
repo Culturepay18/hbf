@@ -23,22 +23,41 @@ interface Article {
 export default function ArticlePage() {
   const { slug } = useParams();
   const [article, setArticle] = useState<Article | null>(null);
+  const [relatedArticles, setRelatedArticles] = useState<Article[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchArticle() {
-      const { data } = await supabase
+    async function fetchArticleData() {
+      // Fetch current article
+      const { data: currentArticle } = await supabase
         .from("articles")
         .select("*")
         .eq("slug", slug)
         .eq("is_published", true)
         .single();
       
-      if (data) setArticle(data);
+      if (currentArticle) {
+        setArticle(currentArticle);
+        
+        // Fetch 3 related articles
+        const { data: related } = await supabase
+          .from("articles")
+          .select("id, title, subtitle, slug, cover_image, created_at")
+          .eq("is_published", true)
+          .neq("id", currentArticle.id)
+          .limit(3);
+        
+        if (related) setRelatedArticles(related);
+      }
       setIsLoading(false);
     }
-    if (slug) fetchArticle();
+    if (slug) fetchArticleData();
   }, [slug]);
+
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    alert("Link copied to clipboard! You can now share it.");
+  };
 
   if (isLoading) {
     return (
@@ -60,18 +79,18 @@ export default function ArticlePage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-[#fcfbf7] pt-40 pb-24">
+      <main className="min-h-screen bg-[#fcfbf7] pt-32 pb-24">
         <article className="container mx-auto px-6 max-w-4xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-12"
           >
-            <Link href="/news" className="inline-flex items-center gap-2 text-hbf-muted hover:text-hbf-green transition-colors mb-10 font-bold uppercase tracking-widest text-xs">
-              <ArrowLeft size={16} /> Back to news
+            <Link href="/news" className="inline-flex items-center gap-2 text-hbf-muted hover:text-hbf-green transition-colors mb-10 font-bold uppercase tracking-widest text-[10px]">
+              <ArrowLeft size={14} /> Back to news
             </Link>
             
-            <h1 className="text-4xl md:text-5xl lg:text-7xl font-bold text-hbf-dark mb-6 leading-tight">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-hbf-dark mb-6 leading-tight">
               {article.title}
             </h1>
 
@@ -83,7 +102,7 @@ export default function ArticlePage() {
 
             <div className="flex flex-wrap items-center justify-between gap-6 py-6 border-y border-black/5 mb-12">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-hbf-green/10 flex items-center justify-center text-hbf-green">
+                <div className="w-10 h-10 rounded-none bg-hbf-green/10 flex items-center justify-center text-hbf-green">
                   <Calendar size={18} />
                 </div>
                 <div>
@@ -92,8 +111,11 @@ export default function ArticlePage() {
                 </div>
               </div>
               
-              <button className="flex items-center gap-2 bg-white border border-black/5 px-6 py-3 rounded-2xl text-hbf-dark font-bold hover:bg-hbf-green hover:text-white transition-all shadow-soft">
-                <Share2 size={18} /> Share
+              <button 
+                onClick={handleShare}
+                className="flex items-center gap-2 bg-white border border-black/5 px-6 py-3 rounded-none text-hbf-dark font-bold hover:bg-hbf-dark hover:text-white transition-all text-sm uppercase tracking-widest"
+              >
+                <Share2 size={16} /> Copy Link
               </button>
             </div>
           </motion.div>
@@ -103,7 +125,7 @@ export default function ArticlePage() {
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.2 }}
-              className="relative aspect-video rounded-[3rem] overflow-hidden mb-20 shadow-2xl"
+              className="relative aspect-video rounded-none overflow-hidden mb-20 border border-black/5"
             >
               <img 
                 src={article.cover_image} 
@@ -123,6 +145,40 @@ export default function ArticlePage() {
               {article.content}
             </ReactMarkdown>
           </motion.div>
+
+          {/* Read Next Section */}
+          {relatedArticles.length > 0 && (
+            <div className="mt-32 pt-20 border-t border-black/10">
+              <h3 className="text-3xl font-bold text-hbf-dark mb-12">Continue Reading</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {relatedArticles.map((rel) => (
+                  <Link 
+                    key={rel.id} 
+                    href={`/news/${rel.slug}`}
+                    className="group bg-white border border-black/5 flex flex-col h-full overflow-hidden transition-all hover:bg-hbf-cream/30"
+                  >
+                    <div className="relative aspect-video overflow-hidden">
+                      {rel.cover_image ? (
+                        <img src={rel.cover_image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt={rel.title} />
+                      ) : (
+                        <div className="w-full h-full bg-hbf-cream flex items-center justify-center text-hbf-muted">
+                          <ImageIcon size={24} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-6">
+                      <h4 className="font-bold text-hbf-dark mb-2 line-clamp-2 leading-tight text-base group-hover:text-hbf-green transition-colors">
+                        {rel.title}
+                      </h4>
+                      <p className="text-xs text-hbf-muted line-clamp-2">
+                        {rel.subtitle}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </article>
       </main>
       <Footer />

@@ -235,6 +235,25 @@ export async function submitApplication(formData: FormData) {
     } else {
       console.warn("Resend API key missing, skipping application emails.");
     }
+
+    // AUTOMATION: Increment the 'applicants' counter in scholarship_stats
+    try {
+      const { data: currentStat } = await (await import("@/lib/supabase")).supabase
+        .from("scholarship_stats")
+        .select("value")
+        .eq("id", "applicants")
+        .single();
+      
+      if (currentStat) {
+        await (await import("@/lib/supabase")).supabase
+          .from("scholarship_stats")
+          .update({ value: (currentStat.value || 0) + 1 })
+          .eq("id", "applicants");
+      }
+    } catch (err) {
+      console.error("Failed to auto-increment applicant counter:", err);
+    }
+
     return { success: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
