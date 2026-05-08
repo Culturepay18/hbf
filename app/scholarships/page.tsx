@@ -19,7 +19,9 @@ import {
   Calendar,
   Loader2,
   UserCheck,
-  Globe
+  Globe,
+  Plus,
+  Minus
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -83,6 +85,37 @@ function Counter({ value }: { value: number }) {
   return <>{count}</>;
 }
 
+function FAQAccordion({ items }: { items: { q: string, a: string }[] }) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  return (
+    <div className="space-y-4">
+      {items.map((item, i) => (
+        <div key={i} className="border border-black/5 rounded-2xl overflow-hidden bg-white shadow-sm transition-all hover:shadow-md">
+          <button
+            onClick={() => setOpenIndex(openIndex === i ? null : i)}
+            className="w-full flex items-center justify-between p-6 text-left hover:bg-[#f8f6f0]/30 transition-colors"
+          >
+            <span className="font-bold text-hbf-dark text-lg">{item.q}</span>
+            <div className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all ${openIndex === i ? 'bg-hbf-green text-white rotate-180' : 'bg-[#f8f6f0] text-hbf-muted'}`}>
+              {openIndex === i ? <Minus size={18} /> : <Plus size={18} />}
+            </div>
+          </button>
+          <motion.div
+            initial={false}
+            animate={{ height: openIndex === i ? "auto" : 0, opacity: openIndex === i ? 1 : 0 }}
+            className="overflow-hidden"
+          >
+            <div className="p-6 pt-0 text-hbf-muted font-medium leading-relaxed border-t border-black/5 bg-[#f8f6f0]/10">
+              {item.a}
+            </div>
+          </motion.div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function ScholarshipsPage() {
   const [scholarships, setScholarships] = useState<Scholarship[]>([]);
   const [stats, setStats] = useState<Stat[]>([]);
@@ -97,17 +130,21 @@ export default function ScholarshipsPage() {
 
       // Fetch Stats
       const { data: stData } = await supabase.from("scholarship_stats").select("*");
-      if (stData) setStats(stData);
-
-      // Fetch Finalist Projects
-      const { data: pData } = await supabase
-        .from("competition_finalists")
-        .select("*")
-        .eq("is_active", true);
-      if (pData) setFinalistProjects(pData);
+      if (stData && stData.length > 0) {
+        setStats(stData);
+      } else {
+        // Default Stats if DB is empty
+        setStats([
+          { id: 'applicants', label: 'Students Reached', value: 1200, icon_name: 'Users' },
+          { id: 'schools', label: 'Partner Schools', value: 15, icon_name: 'Globe' },
+          { id: 'finalists', label: 'Finalists', value: 50, icon_name: 'UserCheck' },
+          { id: 'teams', label: 'Innovation Teams', value: 10, icon_name: 'Trophy' },
+        ]);
+      }
 
       setIsLoading(false);
     }
+
     fetchData();
   }, []);
 
@@ -153,24 +190,8 @@ export default function ScholarshipsPage() {
                   <Link href="/contact">Register School</Link>
                 </Button>
               </div>
-
-              {/* Stats Bar */}
-              <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-8 py-8 border-y border-black/10">
-                {stats.map((stat) => (
-                  <div key={stat.id} className="flex items-center gap-4">
-                    <div className="shrink-0">
-                      {getIcon(stat.icon_name)}
-                    </div>
-                    <div>
-                      <p className={`text-4xl font-bold leading-none ${getStatColor(stat.id)}`}>
-                        <Counter value={stat.value} />
-                      </p>
-                      <p className="text-sm font-bold text-hbf-dark mt-1">{stat.label}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
+
 
             <div className="relative min-h-[480px] overflow-hidden rounded-lg bg-hbf-dark shadow-2xl">
               <Image src="/images/JOA06605.jpg" alt="Students" fill priority className="object-cover" />
@@ -212,73 +233,247 @@ export default function ScholarshipsPage() {
         </div>
       </section>
 
-      {/* NEW: Finalist Teams Section */}
-      {finalistProjects.length > 0 && (
-        <section className="py-24 bg-white">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-hbf-dark mb-12">Finalist Innovation Projects</h2>
-            <div className="grid md:grid-cols-2 gap-10">
-              {finalistProjects.map((project) => (
-                <motion.div
-                  key={project.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  className="bg-white border border-black/5 rounded-[3rem] p-10 shadow-soft hover:shadow-2xl transition-all duration-500"
-                >
-                  <div className="flex justify-between items-start mb-8">
-                    <h3 className="text-3xl font-bold text-hbf-dark">Team: {project.title}</h3>
-                    <Badge className="bg-hbf-green/10 text-hbf-green border-none px-4 py-1.5 uppercase font-bold text-[10px] tracking-widest">Finalist Team</Badge>
-                  </div>
-
-                  <div className="space-y-8">
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-hbf-orange mb-2">Problem</p>
-                      <p className="text-hbf-dark font-medium leading-relaxed">{project.problem}</p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-hbf-orange mb-2">Solution</p>
-                      <p className="text-hbf-dark font-medium leading-relaxed">{project.solution}</p>
-                    </div>
-                    <div className="pt-6 border-t border-black/5 grid grid-cols-2 gap-8">
-                      <div>
-                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-hbf-muted mb-1">Budget</p>
-                        <p className="text-2xl font-bold text-hbf-dark">{project.budget}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-hbf-muted mb-1">Impact</p>
-                        <p className="text-2xl font-bold text-hbf-green leading-tight">{project.impact}</p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
+      {/* Program Phases (Timeless Info Cards) */}
+      <section className="bg-white py-20 border-t border-black/5">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-8 md:grid-cols-3">
+            <div className="rounded-[2rem] border border-black/5 bg-[#f8f6f0]/50 p-10 shadow-soft transition-transform hover:-translate-y-1">
+              <School className="text-hbf-green" size={32} />
+              <p className="mt-6 text-sm font-bold uppercase tracking-widest text-hbf-orange">Phase 1</p>
+              <h2 className="mt-2 text-2xl font-bold text-hbf-dark leading-tight">School Nominations</h2>
+              <p className="mt-4 text-hbf-muted font-medium">Partner schools nominate their most promising NS3 students based on academic excellence.</p>
             </div>
-          </div>
-        </section>
-      )}
-
-      {/* Rest of Info Cards */}
-      <section className="bg-white py-12 border-t border-black/5">
-        <div className="mx-auto grid max-w-7xl gap-5 px-4 sm:px-6 md:grid-cols-3 lg:px-8">
-          <div className="rounded-lg border border-black/8 bg-white p-6 shadow-soft">
-            <CalendarDays className="text-hbf-green" size={28} />
-            <p className="mt-4 text-sm font-semibold uppercase tracking-[0.14em] text-hbf-orange">School registration</p>
-            <h2 className="mt-2 text-2xl font-bold text-hbf-dark">Nov 1-15</h2>
-          </div>
-          <div className="rounded-lg border border-black/8 bg-white p-6 shadow-soft">
-            <BookOpenCheck className="text-hbf-green" size={28} />
-            <p className="mt-4 text-sm font-semibold uppercase tracking-[0.14em] text-hbf-orange">Essay deadline</p>
-            <h2 className="mt-2 text-2xl font-bold text-hbf-dark">January 31, 2026</h2>
-          </div>
-          <div className="rounded-lg border border-black/8 bg-white p-6 shadow-soft">
-            <GraduationCap className="text-hbf-green" size={28} />
-            <p className="mt-4 text-sm font-semibold uppercase tracking-[0.14em] text-hbf-orange">Eligible students</p>
-            <h2 className="mt-2 text-2xl font-bold text-hbf-dark">NS3 students</h2>
+            <div className="rounded-[2rem] border border-black/5 bg-[#f8f6f0]/50 p-10 shadow-soft transition-transform hover:-translate-y-1">
+              <FileText className="text-hbf-green" size={32} />
+              <p className="mt-6 text-sm font-bold uppercase tracking-widest text-hbf-orange">Phase 2</p>
+              <h2 className="mt-2 text-2xl font-bold text-hbf-dark leading-tight">Essay Submission</h2>
+              <p className="mt-4 text-hbf-muted font-medium">Nominees write a compelling essay (dissertation) on leadership and community impact.</p>
+            </div>
+            <div className="rounded-[2rem] border border-black/5 bg-[#f8f6f0]/50 p-10 shadow-soft transition-transform hover:-translate-y-1">
+              <Trophy className="text-hbf-green" size={32} />
+              <p className="mt-6 text-sm font-bold uppercase tracking-widest text-hbf-orange">Phase 3</p>
+              <h2 className="mt-2 text-2xl font-bold text-hbf-dark leading-tight">Innovation Lab</h2>
+              <p className="mt-4 text-hbf-muted font-medium">Finalists collaborate on a community project to solve local challenges and win the grand prize.</p>
+            </div>
           </div>
         </div>
       </section>
 
-      <Footer />
+
+      {/* Eligibility & Requirements Section */}
+      <section className="py-32 bg-white relative overflow-hidden">
+        {/* Decorative background element */}
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-[#f8f6f0]/40 -skew-x-12 translate-x-1/2 pointer-events-none" />
+        
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative">
+          <div className="max-w-3xl mb-20">
+            <Badge className="mb-6 bg-hbf-green/10 text-hbf-green border-none px-4 py-1 font-bold text-xs uppercase tracking-widest">Requirements</Badge>
+            <h2 className="text-5xl md:text-6xl font-black text-hbf-dark leading-[1.1] mb-8">
+              Who can apply for the <span className="text-hbf-green">HBF Excellence</span> scholarship?
+            </h2>
+            <p className="text-xl text-hbf-muted leading-relaxed">
+              We identify and support the most promising students who demonstrate exceptional academic potential and a commitment to Haiti&apos;s future.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-12 gap-12">
+            <div className="lg:col-span-7 space-y-6">
+              {[
+                { title: "Academic Level", desc: "Currently enrolled in NS3 (Rheto / 11th grade) in a partner school.", icon: <School size={24} /> },
+                { title: "Academic Excellence", desc: "Maintained a minimum average of 7.5/10 in the previous school year.", icon: <Award size={24} /> },
+                { title: "Leadership Potential", desc: "Active participation in school activities or community service is a must.", icon: <Trophy size={24} /> }
+              ].map((item, i) => (
+                <motion.div 
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  className="group bg-[#f8f6f0]/50 p-8 rounded-[2rem] border border-black/5 hover:bg-white hover:shadow-xl hover:border-hbf-green/20 transition-all duration-500 flex gap-8 items-start"
+                >
+                  <div className="shrink-0 w-16 h-16 rounded-2xl bg-white shadow-sm flex items-center justify-center text-hbf-green group-hover:bg-hbf-green group-hover:text-white transition-all duration-500">
+                    {item.icon}
+                  </div>
+                  <div>
+                    <h4 className="text-2xl font-bold text-hbf-dark mb-2">{item.title}</h4>
+                    <p className="text-hbf-muted font-medium leading-relaxed">{item.desc}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="lg:col-span-5">
+              <div className="bg-hbf-dark rounded-[3rem] p-12 text-white shadow-2xl relative overflow-hidden h-full">
+                <div className="absolute top-0 right-0 p-8 opacity-10">
+                  <FileText size={120} />
+                </div>
+                <h4 className="text-3xl font-bold mb-10 relative text-white">Required <br />Documents</h4>
+                <ul className="space-y-6 relative">
+                  {[
+                    "Last year's report card",
+                    "Director recommendation",
+                    "Birth certificate / NIF",
+                    "Passport photo",
+                    "Application form"
+                  ].map((doc, i) => (
+                    <li key={i} className="flex items-center gap-4 text-white/80 font-bold group">
+                      <div className="w-2 h-2 rounded-full bg-hbf-green group-hover:scale-150 transition-transform" />
+                      {doc}
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-12 pt-8 border-t border-white/10">
+                  <p className="text-sm font-bold text-hbf-orange uppercase tracking-widest mb-4">Digital Submission</p>
+                  <p className="text-sm text-white/60 leading-relaxed italic">
+                    Scan and upload all documents to our portal. Physical copies are not accepted during the first phase.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Partner Schools Section */}
+      <section className="py-32 bg-[#f8f6f0]/30 border-y border-black/5">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
+            <div className="max-w-2xl">
+              <h2 className="text-5xl font-black text-hbf-dark mb-6">Our Partner <br /><span className="text-hbf-green">Network</span></h2>
+              <p className="text-lg text-hbf-muted font-medium">To be eligible, students must belong to one of these prestigious institutions in Northern Haiti.</p>
+            </div>
+            <Link href="/contact" className="group flex items-center gap-3 font-bold text-hbf-dark bg-white px-8 py-4 rounded-full border border-black/5 shadow-sm hover:bg-hbf-dark hover:text-white transition-all">
+              Register your school <ArrowRight size={20} className="group-hover:translate-x-2 transition-transform" />
+            </Link>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              "Collège pratique du Nord",
+              "Institution Académie Chrétienne (IACQM)",
+              "Ecole du Sacre cœur (FDM)",
+              "COLLEGE MODÈLE",
+              "Centre de formation classique",
+              "ECOLE MARIE IMMACULEE"
+            ].map((school, i) => (
+              <motion.div 
+                key={i} 
+                whileHover={{ y: -10 }}
+                className="bg-white p-10 rounded-[2.5rem] border border-black/5 flex flex-col gap-6 shadow-sm hover:shadow-2xl transition-all duration-500"
+              >
+                <div className="w-14 h-14 rounded-2xl bg-[#f8f6f0] flex items-center justify-center text-hbf-dark font-black text-xl">
+                  {i + 1}
+                </div>
+                <div>
+                  <p className="text-2xl font-bold text-hbf-dark leading-tight">{school}</p>
+                  <div className="mt-4 flex items-center gap-2">
+                    <MapPin size={14} className="text-hbf-green" />
+                    <span className="text-[10px] font-bold text-hbf-muted uppercase tracking-widest">Cap-Haïtien, Nord</span>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-32 bg-white">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center mb-20">
+          <h2 className="text-5xl font-black text-hbf-dark mb-6 text-center">Still have questions?</h2>
+          <p className="text-xl text-hbf-muted font-medium">Everything you need to know about the HBF Scholarship process.</p>
+        </div>
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pb-32">
+          <FAQAccordion 
+            items={[
+              { q: "Is the scholarship application free?", a: "Yes, applying for the HBF scholarship is completely free for all nominated students. We believe financial status should never be a barrier to excellence." },
+              { q: "What schools are currently partner schools?", a: "We work with a specific list of accredited schools in Northern Haiti (see the network section above). If your school is not listed, your director must register before you can apply." },
+              { q: "What happens after I win?", a: "Winners receive a comprehensive support package: full university tuition grants, high-performance laptops, and access to our exclusive Leadership Mentoring program." },
+              { q: "Who can nominate students?", a: "Only the School Director or the appointed Teacher Liaison can officially nominate students. This ensures that only the most dedicated students are entered into the competition." }
+            ]} 
+          />
+        </div>
+      </section>
+
+
+
+
+
+      {/* Support & Resources Section */}
+      <section className="pb-24 pt-12 bg-[#f8f6f0]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Teacher Liaison Card */}
+            <div className="bg-white rounded-[2.5rem] p-10 shadow-soft flex flex-col h-full border border-black/5">
+              <div className="w-12 h-12 rounded-2xl bg-hbf-green/10 flex items-center justify-center text-hbf-green mb-8">
+                <Users size={24} />
+              </div>
+              <h3 className="text-3xl font-bold text-hbf-dark mb-6">Teacher Liaison</h3>
+              <p className="text-hbf-muted leading-relaxed text-lg">
+                Each school appoints one teacher liaison as the main contact with HBF. This person coordinates essay collection, nominee communication, and WhatsApp updates.
+              </p>
+            </div>
+
+            {/* Support & Resources Card */}
+            <div className="bg-hbf-green rounded-[2.5rem] p-10 shadow-lg text-white flex flex-col h-full">
+              <div className="w-12 h-12 rounded-2xl bg-white/20 flex items-center justify-center text-white mb-8">
+                <MessageCircle size={24} />
+              </div>
+              <h3 className="text-3xl font-bold mb-4">Support & Resources</h3>
+              <p className="text-white/80 mb-10 text-lg">
+                Need help? Contact us via WhatsApp or download our guides.
+              </p>
+
+              <div className="space-y-4">
+                {/* WhatsApp Support */}
+                <a 
+                  href={contact.whatsappUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-white p-6 rounded-2xl flex items-center justify-between group transition-all hover:bg-white/90 shadow-sm"
+                >
+                  <div className="flex items-center gap-4 text-hbf-dark">
+                    <div className="w-10 h-10 rounded-xl bg-hbf-green/10 flex items-center justify-center text-hbf-green">
+                      <MessageCircle size={20} />
+                    </div>
+                    <div>
+                      <p className="font-bold">WhatsApp Support</p>
+                      <p className="text-xs text-hbf-muted font-medium">{contact.whatsapp}</p>
+                    </div>
+                  </div>
+                  <ArrowRight size={18} className="text-hbf-dark transition-transform group-hover:translate-x-1" />
+                </a>
+
+                {/* PDF Links */}
+                <div className="bg-white/10 border border-white/20 p-6 rounded-2xl flex items-center justify-between group cursor-pointer hover:bg-white/20 transition-all">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                      <FileText size={20} />
+                    </div>
+                    <div>
+                      <p className="font-bold">Teacher Liaison Guide</p>
+                      <p className="text-[10px] uppercase font-bold text-white/60 tracking-wider">PDF Document</p>
+                    </div>
+                  </div>
+                  <Download size={18} className="text-white" />
+                </div>
+
+                <div className="bg-white/10 border border-white/20 p-6 rounded-2xl flex items-center justify-between group cursor-pointer hover:bg-white/20 transition-all">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                      <FileText size={20} />
+                    </div>
+                    <div>
+                      <p className="font-bold">Parent Consent Letter</p>
+                      <p className="text-[10px] uppercase font-bold text-white/60 tracking-wider">PDF Document</p>
+                    </div>
+                  </div>
+                  <Download size={18} className="text-white" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
