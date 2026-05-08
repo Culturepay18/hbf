@@ -110,6 +110,8 @@ function FAQAccordion({ items }: { items: { q: string, a: string }[] }) {
               {item.a}
             </div>
           </motion.div>
+
+
         </div>
       ))}
     </div>
@@ -323,7 +325,7 @@ export default function ScholarshipsPage() {
                   {[
                     "Last year's report card",
                     "Director recommendation",
-                    "Birth certificate / NIF",
+                    "Birth certificate",
                     "Passport photo",
                     "Application form"
                   ].map((doc, i) => (
@@ -364,21 +366,31 @@ export default function ScholarshipsPage() {
                 <motion.div 
                   key={school.id} 
                   whileHover={{ y: -10 }}
-                  className="bg-white p-10 rounded-[2.5rem] border border-black/5 flex flex-col gap-6 shadow-sm hover:shadow-2xl transition-all duration-500"
+                  className="group relative bg-white p-10 rounded-[2rem] border border-black/5 flex flex-col gap-8 shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden"
                 >
-                  <div className="w-14 h-14 rounded-2xl bg-[#f8f6f0] flex items-center justify-center text-hbf-dark font-black text-xl">
-                    {i + 1}
+                  {/* Decorative corner element */}
+                  <div className="absolute -right-4 -top-4 w-24 h-24 bg-hbf-green/5 rounded-full blur-2xl group-hover:bg-hbf-green/10 transition-colors" />
+                  
+                  <div className="flex justify-between items-start relative">
+                    <div className="w-12 h-12 rounded-xl bg-hbf-green text-white flex items-center justify-center font-black text-lg shadow-lg shadow-hbf-green/20">
+                      {(i + 1).toString().padStart(2, '0')}
+                    </div>
+                    <ArrowRight size={20} className="text-hbf-green opacity-0 -translate-x-4 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500" />
                   </div>
-                  <div>
-                    <p className="text-2xl font-bold text-hbf-dark leading-tight">{school.name}</p>
-                    <div className="mt-4 flex items-center gap-2">
-                      <MapPin size={14} className="text-hbf-green" />
-                      <span className="text-[10px] font-bold text-hbf-muted uppercase tracking-widest">{school.location || 'Cap-Haïtien, Nord'}</span>
+
+                  <div className="relative">
+                    <h3 className="text-2xl font-black text-hbf-dark leading-tight mb-4 group-hover:text-hbf-green transition-colors">
+                      {school.name}
+                    </h3>
+                    <div className="flex items-center gap-2 py-1 px-3 bg-[#f8f6f0] rounded-full w-fit">
+                      <MapPin size={12} className="text-hbf-green" />
+                      <span className="text-[10px] font-black text-hbf-muted uppercase tracking-widest">{school.location || 'Cap-Haïtien, Nord'}</span>
                     </div>
                   </div>
                 </motion.div>
               ))
             ) : (
+
               // Fallback/Empty State
               <div className="col-span-full py-20 text-center bg-white rounded-[2.5rem] border border-dashed border-black/10">
                 <School className="mx-auto text-hbf-muted/30 mb-4" size={48} />
@@ -396,12 +408,12 @@ export default function ScholarshipsPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-32 bg-white">
+      <section className="py-20 bg-white">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center mb-20">
           <h2 className="text-5xl font-black text-hbf-dark mb-6 text-center">Still have questions?</h2>
           <p className="text-xl text-hbf-muted font-medium">Everything you need to know about the HBF Scholarship process.</p>
         </div>
-        <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 pb-32">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 pb-12">
           <FAQAccordion 
             items={[
               { q: "Is the scholarship application free?", a: "Yes, applying for the HBF scholarship is completely free for all nominated students. We believe financial status should never be a barrier to excellence." },
@@ -418,7 +430,8 @@ export default function ScholarshipsPage() {
 
 
       {/* Support & Resources Section */}
-      <section className="pb-24 pt-12 bg-[#f8f6f0]">
+      <section className="py-24 bg-[#f8f6f0]">
+
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-8">
             {/* Teacher Liaison Card */}
@@ -493,6 +506,7 @@ export default function ScholarshipsPage() {
           </div>
         </div>
       </section>
+      <Footer />
     </main>
   );
 }
