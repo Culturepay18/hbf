@@ -310,38 +310,74 @@ export default function ScholarshipsPage() {
       </section>
 
       <section className="py-20">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1fr_0.9fr] lg:px-8">
-          <div className="rounded-lg border border-black/8 bg-white p-7 shadow-soft">
-            <Users className="text-hbf-green" size={30} />
-            <h2 className="mt-4 text-3xl font-bold text-hbf-dark">Teacher Liaison</h2>
-            <p className="mt-4 leading-8 text-hbf-muted">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
+          <div className="rounded-[2.5rem] border border-black/8 bg-white p-10 shadow-soft">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-hbf-green/10 text-hbf-green">
+              <Users size={32} />
+            </div>
+            <h2 className="mt-8 text-3xl font-bold text-hbf-dark">Teacher Liaison</h2>
+            <p className="mt-4 text-lg leading-relaxed text-hbf-muted">
               Each school appoints one teacher liaison as the main contact with HBF. This person coordinates essay
               collection, nominee communication, and WhatsApp updates.
             </p>
           </div>
-          <div className="rounded-lg bg-hbf-green p-7 text-white shadow-soft">
-            <MessageCircle size={30} />
-            <h2 className="mt-4 text-3xl font-bold">Support & Resources</h2>
-            <p className="mt-4 text-white/85">WhatsApp Support: {contact.whatsapp}</p>
-            <div className="mt-6 grid gap-3">
-              <Button asChild variant="outline" className="h-12 justify-start rounded-full bg-white text-hbf-dark">
-                <Link href={contact.whatsappUrl}>
-                  <MessageCircle size={18} />
-                  WhatsApp Support
+          <div className="rounded-[2.5rem] bg-hbf-green p-10 text-white shadow-lift overflow-hidden relative group">
+            <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
+            <div className="absolute -left-10 -bottom-10 h-40 w-40 rounded-full bg-hbf-orange/20 blur-3xl" />
+            
+            <div className="relative z-10">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md">
+                <MessageCircle size={32} />
+              </div>
+              <h2 className="mt-8 text-3xl font-bold">Support & Resources</h2>
+              <p className="mt-4 text-white/90 text-lg">
+                Need help? Contact us via WhatsApp or download our guides.
+              </p>
+              
+              <div className="mt-10 space-y-4">
+                <Link 
+                  href={contact.whatsappUrl} 
+                  target="_blank"
+                  className="flex items-center gap-4 rounded-2xl bg-white p-4 text-hbf-dark transition-all hover:scale-[1.02] hover:shadow-xl group/link"
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-hbf-green/10 text-hbf-green transition-colors group-hover/link:bg-hbf-green group-hover/link:text-white">
+                    <MessageCircle size={24} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-bold">WhatsApp Support</p>
+                    <p className="text-xs text-hbf-muted">{contact.whatsapp}</p>
+                  </div>
+                  <ArrowRight size={18} className="text-hbf-muted group-hover/link:text-hbf-green transition-colors" />
                 </Link>
-              </Button>
-              <Button asChild variant="outline" className="h-12 justify-start rounded-full bg-white text-hbf-dark">
-                <Link href="/contact">
-                  <Download size={18} />
-                  Teacher Liaison Guide (PDF)
+
+                <Link 
+                  href="/contact" 
+                  className="flex items-center gap-4 rounded-2xl bg-white/10 border border-white/20 p-4 text-white transition-all hover:bg-white/20 group/link"
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 text-white">
+                    <FileText size={24} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-bold">Teacher Liaison Guide</p>
+                    <p className="text-xs text-white/70">PDF Document</p>
+                  </div>
+                  <Download size={18} className="text-white/40 group-hover/link:text-white transition-colors" />
                 </Link>
-              </Button>
-              <Button asChild variant="outline" className="h-12 justify-start rounded-full bg-white text-hbf-dark">
-                <Link href="/contact">
-                  <Download size={18} />
-                  Parent Letter (PDF)
+
+                <Link 
+                  href="/contact" 
+                  className="flex items-center gap-4 rounded-2xl bg-white/10 border border-white/20 p-4 text-white transition-all hover:bg-white/20 group/link"
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 text-white">
+                    <Download size={24} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-bold">Parent Consent Letter</p>
+                    <p className="text-xs text-white/70">PDF Document</p>
+                  </div>
+                  <Download size={18} className="text-white/40 group-hover/link:text-white transition-colors" />
                 </Link>
-              </Button>
+              </div>
             </div>
           </div>
         </div>

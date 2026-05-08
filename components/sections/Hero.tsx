@@ -44,8 +44,8 @@ export function Hero() {
             sizes="100vw"
             className="object-cover object-center"
           />
-          {/* Overlay sombre pour la lisibilité */}
-          <div className="absolute inset-0 bg-black/40 z-10" />
+          {/* Gradient overlay for better image visibility and text contrast */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent z-10" />
         </div>
 
         <div className="relative z-20 mx-auto flex h-full max-w-7xl flex-col items-center justify-start pt-[50vh] px-8 text-center sm:px-6 lg:px-8">
