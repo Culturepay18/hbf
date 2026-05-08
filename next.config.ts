@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   transpilePackages: ["@uiw/react-md-editor", "@uiw/react-markdown-preview"],
-  // Skip linting during build if needed, but transpilation is the likely fix
+  // In Next.js 15, these are still the correct keys for ignoring errors during build
   eslint: {
     ignoreDuringBuilds: true,
   },

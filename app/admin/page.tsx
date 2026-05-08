@@ -1,6 +1,8 @@
 import { FileText, Lightbulb, GraduationCap, Users } from "lucide-react";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
+
 const stats = [
   { name: "Total Articles", stat: "12", icon: FileText, color: "text-blue-500", bg: "bg-blue-50" },
   { name: "Active Projects", stat: "4", icon: Lightbulb, color: "text-amber-500", bg: "bg-amber-50" },
