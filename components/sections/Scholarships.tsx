@@ -25,7 +25,7 @@ export function Scholarships() {
         <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
           <div className="max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.1em] text-hbf-orange">Scholarships</p>
-            <h2 className="mt-3 text-4xl md:text-5xl font-bold leading-tight text-hbf-dark font-[family-name:var(--font-patrick-hand)]">
+            <h2 className="mt-3 text-4xl font-bold leading-tight text-hbf-dark">
               Scholarship Opportunities
             </h2>
             <p className="mt-6 text-lg text-hbf-muted leading-relaxed">

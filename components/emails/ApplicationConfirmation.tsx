@@ -9,7 +9,7 @@ export const ApplicationConfirmationEmail: React.FC<Readonly<ApplicationConfirma
   studentName,
   applicationId,
 }) => (
-  <div style={{ fontFamily: "Arial, sans-serif", lineHeight: "1.6", color: "#333" }}>
+  <div style={{ fontFamily: "'Poppins', sans-serif", lineHeight: "1.6", color: "#333" }}>
     <h1 style={{ color: "#006838" }}>Thank you for your application, {studentName}!</h1>
     <p>We have successfully received your scholarship application for <strong>Haiti Bright Futures</strong>.</p>
     <p>Your application ID is: <strong>#{applicationId}</strong></p>

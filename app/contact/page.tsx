@@ -42,7 +42,7 @@ export default function ContactPage() {
       <main className="pt-32 pb-20 bg-hbf-cream min-h-screen">
         <div className="container mx-auto px-4 max-w-2xl">
           <div className="bg-white p-8 md:p-12 rounded-[2.5rem] shadow-soft border border-hbf-green/5">
-            <h1 className="text-4xl font-bold text-hbf-dark font-[family-name:var(--font-patrick-hand)] mb-4">
+            <h1 className="text-3xl md:text-4xl font-bold text-hbf-dark mb-4">
               Get in Touch
             </h1>
             <p className="text-hbf-muted mb-8">

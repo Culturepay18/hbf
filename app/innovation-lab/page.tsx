@@ -40,7 +40,7 @@ export default function InnovationLabPage() {
         {/* Intro Section */}
         <div className="container mx-auto px-4 mb-24">
           <div className="max-w-4xl">
-            <h1 className="text-5xl md:text-7xl font-bold text-hbf-dark font-[family-name:var(--font-patrick-hand)] mb-8">
+            <h1 className="text-5xl font-bold text-hbf-dark mb-8">
               Real Solutions Built by Haiti's Next Generation
             </h1>
             <p className="text-2xl text-hbf-muted leading-relaxed">
@@ -57,7 +57,7 @@ export default function InnovationLabPage() {
                 <h2 className="text-hbf-orange font-bold tracking-[0.2em] uppercase text-sm mb-6">
                   The Challenge
                 </h2>
-                <h3 className="text-4xl font-bold text-hbf-dark font-[family-name:var(--font-patrick-hand)] mb-6">
+                <h3 className="text-3xl md:text-4xl font-bold text-hbf-dark mb-6">
                   Cap-Haitien Faces Critical Challenges
                 </h3>
                 <p className="text-lg text-hbf-muted leading-relaxed mb-8">
@@ -87,7 +87,7 @@ export default function InnovationLabPage() {
         {/* Projects Section */}
         <section className="py-24">
           <div className="container mx-auto px-4">
-            <h2 className="text-4xl font-bold text-hbf-dark font-[family-name:var(--font-patrick-hand)] mb-16 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-hbf-dark mb-16 text-center">
               Current Student Projects
             </h2>
             <div className="grid lg:grid-cols-3 gap-10">
@@ -104,7 +104,7 @@ export default function InnovationLabPage() {
                     <Badge className="bg-hbf-orange/10 text-hbf-orange hover:bg-hbf-orange/10 border-none px-4 py-1 rounded-full mb-4">
                       Active Project
                     </Badge>
-                    <h4 className="text-3xl font-bold text-hbf-dark font-[family-name:var(--font-patrick-hand)]">
+                    <h4 className="text-2xl md:text-3xl font-bold text-hbf-dark">
                       {project.team}
                     </h4>
                   </div>
@@ -139,7 +139,7 @@ export default function InnovationLabPage() {
         {/* Call to Action */}
         <section className="py-24 bg-hbf-brown text-white text-center">
           <div className="container mx-auto px-4">
-            <h2 className="text-4xl md:text-5xl font-bold mb-10 font-[family-name:var(--font-patrick-hand)]">
+            <h2 className="text-4xl font-bold mb-10">
               Support a student-led project today
             </h2>
             <div className="flex flex-wrap justify-center gap-6">

@@ -36,7 +36,7 @@ export function SupportMission() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl md:text-6xl font-bold mb-10 font-[family-name:var(--font-patrick-hand)] leading-tight drop-shadow-lg">
+            <h2 className="text-4xl md:text-5xl font-bold mb-10 leading-tight drop-shadow-lg">
               Join us in building Haiti's next generation of leaders
             </h2>
             

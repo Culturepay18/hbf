@@ -58,7 +58,7 @@ export default function HowItWorksPage() {
       <main className="pt-32 pb-24 bg-hbf-cream">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-20">
-            <h1 className="text-5xl md:text-7xl font-bold text-hbf-dark font-[family-name:var(--font-patrick-hand)] mb-6">
+            <h1 className="text-5xl font-bold text-hbf-dark mb-6">
               How It Works
             </h1>
             <p className="text-xl text-hbf-muted">
@@ -83,7 +83,7 @@ export default function HowItWorksPage() {
                     <div className="flex-1 text-center md:text-right">
                       {index % 2 === 0 ? (
                         <>
-                          <h3 className="text-3xl font-bold text-hbf-dark font-[family-name:var(--font-patrick-hand)] mb-2">{step.title}</h3>
+                          <h3 className="text-3xl font-bold text-hbf-dark mb-2">{step.title}</h3>
                           <p className="text-hbf-muted">{step.description}</p>
                         </>
                       ) : null}
@@ -97,7 +97,7 @@ export default function HowItWorksPage() {
                     <div className="flex-1 text-center md:text-left">
                       {index % 2 !== 0 ? (
                         <>
-                          <h3 className="text-3xl font-bold text-hbf-dark font-[family-name:var(--font-patrick-hand)] mb-2">{step.title}</h3>
+                          <h3 className="text-3xl font-bold text-hbf-dark mb-2">{step.title}</h3>
                           <p className="text-hbf-muted">{step.description}</p>
                         </>
                       ) : null}

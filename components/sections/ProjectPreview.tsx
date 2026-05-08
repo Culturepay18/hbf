@@ -32,7 +32,7 @@ export function ProjectPreview() {
             <h2 className="text-hbf-orange font-bold tracking-[0.2em] uppercase text-sm mb-4">
               Innovation Lab
             </h2>
-            <h3 className="text-4xl md:text-5xl font-bold text-hbf-dark font-[family-name:var(--font-patrick-hand)] mb-6">
+            <h3 className="text-3xl md:text-4xl font-bold text-hbf-dark mb-6">
               Real World Challenges
             </h3>
             <div className="space-y-6 text-lg text-hbf-muted">
@@ -77,7 +77,7 @@ export function ProjectPreview() {
                   Finalist Team
                 </Badge>
                 
-                <h4 className="text-3xl font-bold text-hbf-dark mb-8 font-[family-name:var(--font-patrick-hand)]">
+                <h4 className="text-2xl md:text-3xl font-bold text-hbf-dark mb-8">
                   Team: {project.team}
                 </h4>
               </div>

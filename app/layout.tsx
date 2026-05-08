@@ -1,18 +1,11 @@
 import type { Metadata } from "next";
-import { Poppins, Patrick_Hand } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-const patrickHand = Patrick_Hand({
-  variable: "--font-patrick-hand",
-  subsets: ["latin"],
-  weight: ["400"],
   display: "swap",
 });
 
@@ -46,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${poppins.variable} ${patrickHand.variable} h-full scroll-smooth overflow-x-hidden`}>
+    <html lang="en" className={`${poppins.variable} h-full scroll-smooth overflow-x-hidden`}>
       <body className="min-h-full font-sans text-hbf-dark overflow-x-hidden">
         {children}
       </body>

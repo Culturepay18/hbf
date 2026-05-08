@@ -17,7 +17,7 @@ export default function TeamPage() {
       <section className="pt-32 pb-16 bg-hbf-cream">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.1em] text-hbf-green">Our Leadership</p>
-          <h1 className="mt-4 text-4xl md:text-5xl font-bold text-hbf-dark">
+          <h1 className="mt-4 text-4xl font-bold text-hbf-dark">
             Meet the Dedicated <span className="text-hbf-green">HBF Team</span>
           </h1>
           <p className="mt-6 max-w-2xl mx-auto text-lg text-hbf-muted">

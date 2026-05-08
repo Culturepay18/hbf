@@ -26,7 +26,7 @@ export default function AboutPage() {
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-4xl md:text-6xl font-bold mb-6 font-[family-name:var(--font-patrick-hand)]"
+              className="text-4xl md:text-5xl font-bold mb-6"
             >
               About Haiti Bright Futures
             </motion.h1>
@@ -34,7 +34,7 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-xl md:text-2xl text-white/90 max-w-3xl mx-auto font-medium"
+              className="text-xl text-white/90 max-w-3xl mx-auto font-medium"
             >
               Dedicated to Transforming Haiti's Future
             </motion.p>
@@ -65,7 +65,7 @@ export default function AboutPage() {
         {/* Our Method Section */}
         <section className="py-20 bg-gray-50">
           <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-5xl font-bold text-center mb-16 font-[family-name:var(--font-patrick-hand)] text-hbf-dark">
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-hbf-dark">
               Our Method
             </h2>
             

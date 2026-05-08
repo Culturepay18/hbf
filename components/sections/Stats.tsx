@@ -53,10 +53,10 @@ export function Stats() {
           {/* Stats à droite */}
           <div className="w-full lg:w-1/2 space-y-12">
             <div>
-              <h2 className="text-4xl md:text-6xl font-bold mb-6 text-hbf-dark font-[family-name:var(--font-patrick-hand)]">
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 text-hbf-dark">
                 Our Real Impact
               </h2>
-              <p className="text-xl text-hbf-muted font-[family-name:var(--font-patrick-hand)]">
+              <p className="text-xl text-hbf-muted">
                 Tangible results from our latest programs, supporting the next generation of leaders in Haiti.
               </p>
             </div>
@@ -71,10 +71,10 @@ export function Stats() {
                     <stat.icon className="h-8 w-8 sm:h-9 sm:w-9" strokeWidth={2.5} />
                   </div>
                   <div>
-                    <h3 className={`text-4xl md:text-5xl font-bold ${stat.color} leading-none font-[family-name:var(--font-patrick-hand)]`}>
+                    <h3 className={`text-4xl font-bold ${stat.color} leading-none`}>
                       {stat.value}
                     </h3>
-                    <p className="text-hbf-dark font-bold text-lg md:text-2xl mt-1 font-[family-name:var(--font-patrick-hand)] leading-tight">
+                    <p className="text-hbf-dark font-bold text-lg md:text-xl mt-1 leading-tight">
                       {stat.label}
                     </p>
                   </div>

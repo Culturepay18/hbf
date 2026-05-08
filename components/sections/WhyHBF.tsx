@@ -35,7 +35,7 @@ export function WhyHBF() {
           <h2 className="text-hbf-orange font-bold tracking-[0.2em] uppercase text-sm mb-4">
             Our Approach
           </h2>
-          <h3 className="text-4xl md:text-5xl font-bold text-hbf-dark font-[family-name:var(--font-patrick-hand)]">
+          <h3 className="text-3xl md:text-4xl font-bold text-hbf-dark">
             What Makes HBF Different
           </h3>
           <p className="mt-4 text-hbf-muted text-lg">
@@ -56,7 +56,7 @@ export function WhyHBF() {
               <div className={`w-16 h-16 rounded-2xl ${feature.bg} ${feature.color} flex items-center justify-center mb-8 group-hover:scale-110 transition-transform`}>
                 <feature.icon size={32} />
               </div>
-              <h4 className="text-2xl font-bold text-hbf-dark mb-4 font-[family-name:var(--font-patrick-hand)]">
+              <h4 className="text-xl md:text-2xl font-bold text-hbf-dark mb-4">
                 {feature.title}
               </h4>
               <p className="text-hbf-muted leading-relaxed">

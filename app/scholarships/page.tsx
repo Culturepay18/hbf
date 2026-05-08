@@ -84,7 +84,7 @@ export default function ScholarshipsPage() {
         <div className="mx-auto max-w-7xl px-4 pb-12 pt-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
             <div>
-              <h1 className="max-w-3xl text-3xl font-bold leading-[1.08] text-hbf-dark md:text-5xl">
+              <h1 className="max-w-3xl text-3xl font-bold leading-[1.08] text-hbf-dark md:text-4xl">
                 Essay Competition for Haiti&apos;s next generation of leaders
               </h1>
               <p className="mt-5 max-w-2xl text-lg leading-8 text-hbf-muted">

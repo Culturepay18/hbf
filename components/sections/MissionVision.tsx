@@ -23,7 +23,7 @@ export function MissionVision() {
               <h2 className="text-hbf-orange font-bold tracking-[0.3em] uppercase text-sm mb-4">
                 Haiti Bright Futures
               </h2>
-              <h3 className="text-4xl md:text-6xl font-bold mb-8 text-hbf-dark leading-tight font-[family-name:var(--font-patrick-hand)]">
+              <h3 className="text-4xl md:text-5xl font-bold mb-8 text-hbf-dark leading-tight">
                 Building Brighter Futures For Haitian Youth
               </h3>
 

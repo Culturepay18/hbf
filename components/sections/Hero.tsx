@@ -56,7 +56,7 @@ export function Hero() {
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="mb-4 max-w-4xl"
           >
-            <h1 className="text-3xl font-bold leading-tight tracking-tight text-white sm:text-6xl lg:text-7xl font-[family-name:var(--font-patrick-hand)]">
+            <h1 className="text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl">
               Building Haiti's Future Leaders Through Innovation and Opportunity
             </h1>
             <p className="mt-6 text-base text-white/90 sm:text-2xl px-2 font-medium max-w-2xl mx-auto">
