@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
@@ -8,41 +9,28 @@ import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import Image from "next/image";
 import { donation } from "@/lib/data";
-
-const projects = [
-  {
-    team: "Green Haiti",
-    status: "Active Project",
-    level: "NS3",
-    problem: "Excess plastic waste in Cap-Haitien streets leading to clogged drainage and pollution.",
-    solution: "A network of community recycling hubs that convert plastic waste into affordable construction materials.",
-    budget: "$2,500",
-    impact: "Up to 10 tons of plastic waste processed annually and job creation through local recycling hubs.",
-    impactLabel: "Projected impact"
-  },
-  {
-    team: "Eco-Light",
-    status: "Future Student Project",
-    level: "NS3",
-    problem: "Students in underserved areas lack consistent access to lighting for studying after sunset.",
-    solution: "Low-cost, solar-powered study lamps manufactured from recycled electronic components and wood.",
-    budget: "Estimated Pilot Budget, $4,000 – $6,000",
-    impact: "Provide reliable study lighting for 150 – 250 students in underserved areas.",
-    impactLabel: "Projected Impact"
-  },
-  {
-    team: "AquaPur",
-    status: "Future Student Project",
-    level: "NS3",
-    problem: "Limited access to clean drinking water in peripheral neighborhoods of Cap-Haitien.",
-    solution: "A natural filtration system using locally sourced sand, charcoal, and gravel.",
-    budget: "Estimated budget, $4,500 - $7,500",
-    impact: "Provide clean water access for up to 50 families during the pilot phase.",
-    impactLabel: "Outcome"
-  }
-];
+import { supabase } from "@/lib/supabase";
 
 export default function InnovationLabPage() {
+  const [projects, setProjects] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadProjects() {
+      const { data } = await supabase
+        .from("innovation_projects")
+        .select("*")
+        .eq("is_active", true)
+        .order("created_at", { ascending: true });
+      
+      if (data) {
+        setProjects(data);
+      }
+      setIsLoading(false);
+    }
+    loadProjects();
+  }, []);
+
   return (
     <>
       <Navbar />
@@ -50,10 +38,10 @@ export default function InnovationLabPage() {
         {/* Intro Section */}
         <div className="container mx-auto px-4 mb-24">
           <div className="max-w-4xl">
-            <h1 className="text-5xl font-bold text-hbf-dark mb-8">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-hbf-dark mb-6 md:mb-8 leading-tight">
               Real Solutions Built by Haiti&apos;s Next Generation
             </h1>
-            <p className="text-2xl text-hbf-muted leading-relaxed">
+            <p className="text-lg sm:text-xl md:text-2xl text-hbf-muted leading-relaxed font-medium">
               The Haiti Bright Futures Innovation Lab is a structured, team-based program where top student finalists design and present solutions to real-world challenges in Cap-Haïtien, with a focus on sustainability and economic impact.
             </p>
           </div>
@@ -101,54 +89,72 @@ export default function InnovationLabPage() {
               Our Innovation Projects
             </h2>
             <div className="grid lg:grid-cols-3 gap-10">
-              {projects.map((project, index) => (
-                <motion.div
-                  key={project.team}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className="bg-white border border-hbf-green/10 rounded-[2.5rem] p-8 shadow-soft flex flex-col h-full"
-                >
-                  <div className="mb-6">
-                    <Badge className={`${project.status === "Active Project" ? "bg-hbf-green/10 text-hbf-green" : "bg-hbf-orange/10 text-hbf-orange"} hover:bg-opacity-10 border-none px-4 py-1 rounded-full mb-4`}>
-                      {project.status}
-                    </Badge>
-                    <h4 className="text-2xl md:text-3xl font-bold text-hbf-dark">
-                      {project.team}
-                    </h4>
+              {isLoading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="bg-white border border-black/5 rounded-[2.5rem] p-8 shadow-soft h-[500px] animate-pulse">
+                    <div className="h-6 w-24 bg-black/10 rounded-full mb-6"></div>
+                    <div className="h-8 w-48 bg-black/10 rounded mb-10"></div>
+                    <div className="space-y-4">
+                      <div className="h-4 w-full bg-black/5 rounded"></div>
+                      <div className="h-4 w-5/6 bg-black/5 rounded"></div>
+                      <div className="h-4 w-full bg-black/5 rounded"></div>
+                    </div>
                   </div>
+                ))
+              ) : projects.length === 0 ? (
+                <div className="col-span-3 text-center py-10 text-hbf-muted">No active projects to display at the moment.</div>
+              ) : (
+                projects.map((project, index) => {
+                  return (
+                    <motion.div
+                      key={project.id || project.title}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: index * 0.1 }}
+                      className="bg-white border border-hbf-green/10 rounded-[2.5rem] p-8 shadow-soft flex flex-col h-full"
+                    >
+                      <div className="mb-6">
+                        <Badge className={`${project.status === "Active Project" ? "bg-hbf-green/10 text-hbf-green" : "bg-hbf-orange/10 text-hbf-orange"} hover:bg-opacity-10 border-none px-4 py-1 rounded-full mb-4`}>
+                          {project.status}
+                        </Badge>
+                        <h4 className="text-2xl md:text-3xl font-bold text-hbf-dark">
+                          {project.title}
+                        </h4>
+                      </div>
 
-                  <div className="space-y-6 flex-grow">
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-hbf-muted mb-1">Problem</p>
-                      <p className="text-hbf-dark">{project.problem}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-hbf-muted mb-1">Solution</p>
-                      <p className="text-hbf-dark font-medium">{project.solution}</p>
-                    </div>
-                  </div>
+                      <div className="space-y-6 flex-grow">
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-widest text-hbf-muted mb-1">Problem</p>
+                          <p className="text-hbf-dark">{project.problem}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-widest text-hbf-muted mb-1">Solution</p>
+                          <p className="text-hbf-dark font-medium">{project.solution}</p>
+                        </div>
+                      </div>
 
-                  <div className="mt-8 pt-6 border-t border-hbf-green/5 grid grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-hbf-muted mb-1">Budget</p>
-                      <p className="text-lg font-bold text-hbf-dark leading-tight">{project.budget}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-hbf-muted mb-1">{project.impactLabel || "Impact"}</p>
-                      <p className="text-lg font-bold text-hbf-green leading-tight">{project.impact}</p>
-                    </div>
-                  </div>
-                  
-                  {project.level && (
-                    <div className="mt-4 pt-4 border-t border-hbf-green/5">
-                      <p className="text-xs font-bold uppercase tracking-widest text-hbf-muted mb-1">Student Level</p>
-                      <p className="text-lg font-bold text-hbf-dark">{project.level}</p>
-                    </div>
-                  )}
-                </motion.div>
-              ))}
+                      <div className="mt-8 pt-6 border-t border-hbf-green/5 grid grid-cols-2 gap-4">
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-widest text-hbf-muted mb-1">Budget</p>
+                          <p className="text-lg font-bold text-hbf-dark leading-tight">{project.budget}</p>
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-widest text-hbf-muted mb-1">{project.impact_label || "Impact"}</p>
+                          <p className="text-lg font-bold text-hbf-green leading-tight">{project.impact}</p>
+                        </div>
+                      </div>
+                      
+                      {project.category && (
+                        <div className="mt-4 pt-4 border-t border-hbf-green/5">
+                          <p className="text-xs font-bold uppercase tracking-widest text-hbf-muted mb-1">Student Level</p>
+                          <p className="text-lg font-bold text-hbf-dark">{project.category}</p>
+                        </div>
+                      )}
+                    </motion.div>
+                  );
+                })
+              )}
             </div>
           </div>
         </section>

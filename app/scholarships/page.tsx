@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   Award,
@@ -12,9 +15,15 @@ import {
   School,
   Trophy,
   Users,
+  MapPin,
+  Calendar,
+  Loader2,
+  AlertCircle
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { supabase } from "@/lib/supabase";
 
 import { Footer } from "@/components/sections/Footer";
 import { Navbar } from "@/components/sections/Navbar";
@@ -22,11 +31,16 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { contact } from "@/lib/data";
 
-export const metadata = {
-  title: "Essay Competition 2026 | Haiti Bright Futures",
-  description:
-    "Haiti Bright Futures 2026 Essay Competition in Cap-Haitien for NS3 students from participating schools.",
-};
+interface Scholarship {
+  id: string;
+  title: string;
+  description: string;
+  status: string;
+  location: string;
+  deadline: string;
+  prize: string;
+  details_link: string;
+}
 
 const journey = [
   "School nominations: 5-10 NS3 students",
@@ -36,7 +50,7 @@ const journey = [
   "5 winners awarded",
 ];
 
-const prizes = [
+const staticPrizes = [
   {
     label: "5 MacBooks",
     detail: "For the final student winners.",
@@ -76,11 +90,27 @@ const forms = [
 ];
 
 export default function ScholarshipsPage() {
+  const [scholarships, setScholarships] = useState<Scholarship[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchScholarships() {
+      const { data } = await supabase
+        .from("scholarships")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (data) setScholarships(data);
+      setIsLoading(false);
+    }
+    fetchScholarships();
+  }, []);
+
   return (
     <main className="min-h-screen bg-[#f8f6f0]">
       <Navbar />
 
-      <section className="pt-28">
+      {/* Hero Section */}
+      <section className="pt-28 bg-white">
         <div className="mx-auto max-w-7xl px-4 pb-12 pt-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
             <div>
@@ -147,46 +177,96 @@ export default function ScholarshipsPage() {
               </div>
             </div>
           </div>
-
-          <div className="mt-12 rounded-lg border border-black/8 bg-white p-5 shadow-soft">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-hbf-orange">Competition path</p>
-            <div className="mt-6 grid gap-6 md:mt-5 md:gap-4 md:grid-cols-5 md:text-center">
-              {journey.map((item, index) => (
-                <div key={item} className="relative">
-                  {index < journey.length - 1 ? (
-                    <>
-                      <div className="absolute left-1/2 top-4 hidden h-px w-full bg-black/10 md:block" />
-                      <div className="absolute bottom-[-24px] left-[15px] top-8 w-px bg-black/10 md:hidden" />
-                    </>
-                  ) : null}
-                  <div className="relative flex items-start gap-4 md:block">
-                    <div className="relative z-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-hbf-green text-sm font-bold text-white md:mx-auto">
-                      {index + 1}
-                    </div>
-                    <p className="pt-1 text-left text-sm font-medium leading-6 text-hbf-dark md:mx-auto md:mt-4 md:max-w-36 md:p-0 md:text-center">
-                      {item}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
-      <section className="bg-white py-12">
+      {/* NEW: Dynamic Scholarships Grid Section */}
+      <section className="py-24 bg-[#f8f6f0]">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mb-16 text-center lg:text-left">
+            <h2 className="text-4xl font-bold text-hbf-dark">Active Programs</h2>
+            <p className="mt-4 text-lg text-hbf-muted font-medium">Explore our current scholarship and competition opportunities.</p>
+          </div>
+
+          {isLoading ? (
+            <div className="flex justify-center py-20">
+              <Loader2 className="animate-spin text-hbf-green" size={48} />
+            </div>
+          ) : scholarships.length === 0 ? (
+            <div className="text-center py-20 border-2 border-dashed border-black/10 rounded-[3rem]">
+              <p className="text-hbf-muted font-bold">No other programs at this time.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {scholarships.map((item, index) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="group flex flex-col bg-white rounded-[2.5rem] border border-black/5 shadow-soft hover:shadow-2xl transition-all duration-500 p-10"
+                >
+                  <div className="flex items-center justify-between mb-6">
+                    <Badge
+                      variant={
+                        item.status === "Open" ? "success" : item.status === "Coming soon" ? "warning" : "neutral"
+                      }
+                      className="text-[10px] px-3 py-1 uppercase tracking-widest font-bold border-none"
+                    >
+                      {item.status}
+                    </Badge>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-hbf-muted flex items-center gap-1.5">
+                      <MapPin size={14} /> {item.location}
+                    </p>
+                  </div>
+
+                  <h3 className="text-2xl font-bold text-hbf-dark mb-3 group-hover:text-hbf-green transition-colors">
+                    {item.title}
+                  </h3>
+
+                  <p className="text-hbf-muted text-base leading-relaxed mb-8 line-clamp-3 font-medium flex-grow">
+                    {item.description}
+                  </p>
+
+                  <div className="space-y-4 mb-8 pt-6 border-t border-black/5">
+                    <div className="flex items-center gap-3 text-hbf-dark">
+                      <Trophy size={18} className="text-hbf-orange" />
+                      <p className="text-sm font-bold">{item.prize}</p>
+                    </div>
+                    <div className="flex items-center gap-3 text-hbf-dark">
+                      <Calendar size={18} className="text-hbf-green" />
+                      <p className="text-sm font-bold">Deadline: {new Date(item.deadline).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+
+                  <a
+                    href={item.details_link || "#"}
+                    className="inline-flex items-center gap-2 text-hbf-green font-bold text-sm hover:translate-x-1 transition-transform"
+                  >
+                    View details <ArrowRight size={18} />
+                  </a>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Rest of the original page content */}
+      <section className="bg-white py-12 border-t border-black/5">
         <div className="mx-auto grid max-w-7xl gap-5 px-4 sm:px-6 md:grid-cols-3 lg:px-8">
-          <div className="rounded-lg border border-black/8 bg-[#f8f6f0] p-6">
+          <div className="rounded-lg border border-black/8 bg-white p-6 shadow-soft">
             <CalendarDays className="text-hbf-green" size={28} />
             <p className="mt-4 text-sm font-semibold uppercase tracking-[0.14em] text-hbf-orange">School registration</p>
             <h2 className="mt-2 text-2xl font-bold text-hbf-dark">Nov 1-15</h2>
           </div>
-          <div className="rounded-lg border border-black/8 bg-[#f8f6f0] p-6">
+          <div className="rounded-lg border border-black/8 bg-white p-6 shadow-soft">
             <BookOpenCheck className="text-hbf-green" size={28} />
             <p className="mt-4 text-sm font-semibold uppercase tracking-[0.14em] text-hbf-orange">Essay deadline</p>
             <h2 className="mt-2 text-2xl font-bold text-hbf-dark">January 31, 2026</h2>
           </div>
-          <div className="rounded-lg border border-black/8 bg-[#f8f6f0] p-6">
+          <div className="rounded-lg border border-black/8 bg-white p-6 shadow-soft">
             <GraduationCap className="text-hbf-green" size={28} />
             <p className="mt-4 text-sm font-semibold uppercase tracking-[0.14em] text-hbf-orange">Eligible students</p>
             <h2 className="mt-2 text-2xl font-bold text-hbf-dark">NS3 students</h2>
@@ -194,6 +274,7 @@ export default function ScholarshipsPage() {
         </div>
       </section>
 
+      {/* ... keeping the rest of the sections ... */}
       <section className="bg-white py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
@@ -215,57 +296,17 @@ export default function ScholarshipsPage() {
                 What if Haiti&apos;s qualification for the 2026 World Cup was not just a sporting achievement, but the
                 beginning of a renaissance?
               </blockquote>
-              <div className="mt-6 grid gap-3 text-sm text-hbf-muted sm:grid-cols-3">
-                <p className="rounded-md bg-white p-3 text-center font-semibold">Max: 2,000 words</p>
-                <p className="rounded-md bg-white p-3 text-center font-semibold">Format: PDF or Word</p>
-                <p className="rounded-md bg-white p-3 text-center font-semibold">Deadline: Jan 31, 2026</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-10 grid gap-4 md:grid-cols-4">
-            {["Originality", "Depth of thought", "Organization", "Creativity"].map((criterion) => (
-              <div key={criterion} className="rounded-lg border border-black/8 bg-white p-5 shadow-soft">
-                <CheckCircle2 className="text-hbf-green" size={22} />
-                <p className="mt-3 font-semibold text-hbf-dark">{criterion}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-[#f8f6f0] py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-8 rounded-lg border border-black/8 bg-white p-7 shadow-soft md:grid-cols-[0.7fr_1.3fr] md:items-center">
-            <div>
-              <Badge variant="warning">Phase 2</Badge>
-              <h2 className="mt-4 text-4xl font-bold text-hbf-dark">Community Project</h2>
-            </div>
-            <div className="border-l-0 border-black/10 md:border-l md:pl-8">
-              <p className="text-lg leading-8 text-hbf-muted">
-                The top 20 finalists advance to a team-based community project phase. Details will be shared with
-                finalists and teacher liaisons at the appropriate time.
-              </p>
-              <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                {["Teamwork", "Community impact", "Final judging"].map((item) => (
-                  <p key={item} className="rounded-md bg-hbf-green/8 px-4 py-3 text-sm font-semibold text-hbf-dark">
-                    {item}
-                  </p>
-                ))}
-              </div>
             </div>
           </div>
         </div>
       </section>
 
       <section className="py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-hbf-orange">Prizes</p>
-            <h2 className="mt-3 text-4xl font-bold text-hbf-dark">Recognition that moves students forward</h2>
-          </div>
-          <div className="mt-10 grid gap-5 md:grid-cols-3">
-            {prizes.map((prize) => (
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-hbf-orange">Prizes</p>
+          <h2 className="mt-3 text-4xl font-bold text-hbf-dark">Recognition that moves students forward</h2>
+          <div className="mt-10 grid gap-5 md:grid-cols-3 text-left">
+            {staticPrizes.map((prize) => (
               <div key={prize.label} className="rounded-lg border border-black/8 bg-white p-7 shadow-soft">
                 <prize.icon className="text-hbf-green" size={32} />
                 <h3 className="mt-5 text-2xl font-bold text-hbf-dark">{prize.label}</h3>
@@ -276,61 +317,28 @@ export default function ScholarshipsPage() {
         </div>
       </section>
 
-      <section className="bg-[#f8f6f0] py-20">
-        <div className="mx-auto grid max-w-7xl gap-6 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
-          {forms.map((form) => (
-            <div key={form.title} className="rounded-lg border border-black/8 bg-white p-7 shadow-soft">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <Badge variant="neutral">{form.title}</Badge>
-                  <h2 className="mt-4 text-3xl font-bold text-hbf-dark">{form.label}</h2>
-                  <p className="mt-2 text-sm font-semibold text-hbf-green">{form.dates}</p>
-                </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-hbf-green/10 text-hbf-green">
-                  <form.icon size={26} />
-                </div>
-              </div>
-              <div className="mt-6 space-y-3">
-                {form.items.map((item) => (
-                  <p key={item} className="flex gap-3 text-sm text-hbf-muted">
-                    <CheckCircle2 className="mt-0.5 shrink-0 text-hbf-green" size={18} />
-                    {item}
-                  </p>
-                ))}
-              </div>
-              <Button asChild className="mt-7 h-12 rounded-full bg-hbf-green px-6 font-bold text-white">
-                <Link href={form.href}>
-                  {form.button}
-                  <ArrowRight size={18} />
-                </Link>
-              </Button>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="py-20">
+      <section className="py-24 bg-white">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
-          <div className="rounded-[2.5rem] border border-black/8 bg-white p-10 shadow-soft">
+          <div className="rounded-[3rem] border border-black/8 bg-white p-12 shadow-soft">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-hbf-green/10 text-hbf-green">
               <Users size={32} />
             </div>
             <h2 className="mt-8 text-3xl font-bold text-hbf-dark">Teacher Liaison</h2>
-            <p className="mt-4 text-lg leading-relaxed text-hbf-muted">
+            <p className="mt-4 text-lg leading-relaxed text-hbf-muted font-medium">
               Each school appoints one teacher liaison as the main contact with HBF. This person coordinates essay
               collection, nominee communication, and WhatsApp updates.
             </p>
           </div>
-          <div className="rounded-[2.5rem] bg-hbf-green p-10 text-white shadow-lift overflow-hidden relative group">
+          <div className="rounded-[3rem] bg-hbf-green p-12 text-white shadow-lift overflow-hidden relative">
             <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-3xl" />
-            <div className="absolute -left-10 -bottom-10 h-40 w-40 rounded-full bg-hbf-orange/20 blur-3xl" />
+            <div className="absolute -left-10 -bottom-10 h-40 w-40 rounded-full bg-black/20 blur-3xl" />
             
             <div className="relative z-10">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md">
                 <MessageCircle size={32} />
               </div>
               <h2 className="mt-8 text-3xl font-bold">Support & Resources</h2>
-              <p className="mt-4 text-white/90 text-lg">
+              <p className="mt-4 text-white/90 text-lg font-medium">
                 Need help? Contact us via WhatsApp or download our guides.
               </p>
               
@@ -338,13 +346,13 @@ export default function ScholarshipsPage() {
                 <Link 
                   href={contact.whatsappUrl} 
                   target="_blank"
-                  className="flex items-center gap-4 rounded-2xl bg-white p-4 text-hbf-dark transition-all hover:scale-[1.02] hover:shadow-xl group/link"
+                  className="flex items-center gap-4 rounded-[1.5rem] bg-white p-5 text-hbf-dark transition-all hover:scale-[1.02] hover:shadow-xl group/link"
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-hbf-green/10 text-hbf-green transition-colors group-hover/link:bg-hbf-green group-hover/link:text-white">
                     <MessageCircle size={24} />
                   </div>
-                  <div className="flex-1">
-                    <p className="font-bold">WhatsApp Support</p>
+                  <div className="flex-1 text-left">
+                    <p className="font-bold text-base">WhatsApp Support</p>
                     <p className="text-xs text-hbf-muted">{contact.whatsapp}</p>
                   </div>
                   <ArrowRight size={18} className="text-hbf-muted group-hover/link:text-hbf-green transition-colors" />
@@ -352,28 +360,28 @@ export default function ScholarshipsPage() {
 
                 <Link 
                   href="/contact" 
-                  className="flex items-center gap-4 rounded-2xl bg-white/10 border border-white/20 p-4 text-white transition-all hover:bg-white/20 group/link"
+                  className="flex items-center gap-4 rounded-[1.5rem] bg-white/10 border border-white/20 p-5 text-white transition-all hover:bg-white/20 group/link"
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 text-white">
                     <FileText size={24} />
                   </div>
-                  <div className="flex-1">
-                    <p className="font-bold">Teacher Liaison Guide</p>
-                    <p className="text-xs text-white/70">PDF Document</p>
+                  <div className="flex-1 text-left">
+                    <p className="font-bold text-base">Teacher Liaison Guide</p>
+                    <p className="text-xs text-white/70 uppercase tracking-widest font-bold">PDF Document</p>
                   </div>
                   <Download size={18} className="text-white/40 group-hover/link:text-white transition-colors" />
                 </Link>
 
                 <Link 
                   href="/contact" 
-                  className="flex items-center gap-4 rounded-2xl bg-white/10 border border-white/20 p-4 text-white transition-all hover:bg-white/20 group/link"
+                  className="flex items-center gap-4 rounded-[1.5rem] bg-white/10 border border-white/20 p-5 text-white transition-all hover:bg-white/20 group/link"
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/20 text-white">
                     <Download size={24} />
                   </div>
-                  <div className="flex-1">
-                    <p className="font-bold">Parent Consent Letter</p>
-                    <p className="text-xs text-white/70">PDF Document</p>
+                  <div className="flex-1 text-left">
+                    <p className="font-bold text-base">Parent Consent Letter</p>
+                    <p className="text-xs text-white/70 uppercase tracking-widest font-bold">PDF Document</p>
                   </div>
                   <Download size={18} className="text-white/40 group-hover/link:text-white transition-colors" />
                 </Link>

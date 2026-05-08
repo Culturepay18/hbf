@@ -67,11 +67,11 @@ const navigationGroups: NavigationGroup[] = [
   },
   {
     label: "News and stories",
-    activePaths: [],
+    activePaths: ["/news"],
     items: [
       {
         label: "Latest stories",
-        href: "/#blog",
+        href: "/news",
         description: "Updates, student stories, and organization news.",
       },
       {
