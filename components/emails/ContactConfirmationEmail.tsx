@@ -28,18 +28,9 @@ export const ContactConfirmationEmail: React.FC<Readonly<ContactConfirmationEmai
       Our team will review it and get back to you as soon as possible.
     </p>
 
-    <div
-      style={{
-        marginTop: "18px",
-        padding: "12px 14px",
-        borderRadius: "12px",
-        backgroundColor: "#f3f9f3",
-        border: "1px solid #dce8dc",
-        color: "#1f3a24",
-      }}
-    >
-      This is an automatic confirmation email.
-    </div>
+    <p style={{ margin: "18px 0 0" }}>
+      <strong>This is an automatic confirmation email.</strong>
+    </p>
 
     <p style={{ margin: "18px 0 0" }}>
       Best regards,
