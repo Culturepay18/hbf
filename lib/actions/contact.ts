@@ -1,9 +1,12 @@
 "use server";
 
+import * as React from "react";
 import { google } from "googleapis";
 import { Resend, type CreateEmailOptions } from "resend";
 import { z } from "zod";
 
+import { ContactConfirmationEmail } from "@/components/emails/ContactConfirmationEmail";
+import { ContactNotificationEmail } from "@/components/emails/ContactNotificationEmail";
 import { getGoogleConfig } from "@/lib/google-config";
 
 const DEFAULT_FROM_ADDRESS = "Haiti Bright Futures <onboarding@resend.dev>";
@@ -23,15 +26,6 @@ function getErrorMessage(error: unknown) {
 function getContextErrorDetails(message: string, context: string) {
   const prefix = `${context}:`;
   return message.startsWith(prefix) ? message.slice(prefix.length).trim() : message;
-}
-
-function escapeHtml(value: string) {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
 }
 
 function parseEmailList(value: string | undefined) {
@@ -57,6 +51,16 @@ function getFromAddress() {
   return process.env.RESEND_FROM_EMAIL?.trim() || DEFAULT_FROM_ADDRESS;
 }
 
+function getPublicSiteUrl() {
+  const value = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (value) return value.replace(/\/$/, "");
+  return "https://hbfhaiti.org";
+}
+
+function getEmailLogoUrl() {
+  return `${getPublicSiteUrl()}/api/logo`;
+}
+
 function getResendClient() {
   const apiKey = process.env.RESEND_API_KEY?.trim();
   return apiKey ? new Resend(apiKey) : null;
@@ -79,6 +83,7 @@ export async function submitContactForm(formData: z.infer<typeof contactSchema>)
   try {
     const validatedData = contactSchema.parse(formData);
     const googleConfig = getGoogleConfig();
+    const submittedAt = new Date().toLocaleString("en-US");
 
     if (process.env.GOOGLE_SHEET_ID && googleConfig) {
       console.log("Tentative de connexion a Google Sheets avec l'ID:", process.env.GOOGLE_SHEET_ID);
@@ -101,7 +106,7 @@ export async function submitContactForm(formData: z.infer<typeof contactSchema>)
           requestBody: {
             values: [
               [
-                new Date().toLocaleString("en-US"),
+                submittedAt,
                 validatedData.name,
                 validatedData.email,
                 validatedData.subject,
@@ -131,14 +136,14 @@ export async function submitContactForm(formData: z.infer<typeof contactSchema>)
         to: getContactRecipients(),
         replyTo: validatedData.email,
         subject: `[Contact] ${validatedData.subject}`,
-        html: `
-          <h2>New contact message</h2>
-          <p><strong>Name:</strong> ${escapeHtml(validatedData.name)}</p>
-          <p><strong>Email:</strong> ${escapeHtml(validatedData.email)}</p>
-          <p><strong>Subject:</strong> ${escapeHtml(validatedData.subject)}</p>
-          <p><strong>Message:</strong></p>
-          <p>${escapeHtml(validatedData.message).replace(/\n/g, "<br/>")}</p>
-        `,
+        react: React.createElement(ContactNotificationEmail, {
+          logoUrl: getEmailLogoUrl(),
+          name: validatedData.name,
+          email: validatedData.email,
+          subject: validatedData.subject,
+          message: validatedData.message,
+          submittedAt,
+        }),
       },
       "Failed to send contact notification email",
     );
@@ -150,12 +155,11 @@ export async function submitContactForm(formData: z.infer<typeof contactSchema>)
         to: validatedData.email,
         replyTo: getContactRecipients(),
         subject: "We received your message",
-        html: `
-          <p>Hello ${escapeHtml(validatedData.name)},</p>
-          <p>Thank you for contacting Haiti Bright Futures.</p>
-          <p>We received your message about <strong>${escapeHtml(validatedData.subject)}</strong> and our team will get back to you soon.</p>
-          <p>Best regards,<br/>Haiti Bright Futures Team</p>
-        `,
+        react: React.createElement(ContactConfirmationEmail, {
+          logoUrl: getEmailLogoUrl(),
+          name: validatedData.name,
+          subject: validatedData.subject,
+        }),
       },
       "Failed to send contact confirmation email",
     );

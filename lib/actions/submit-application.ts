@@ -1,9 +1,12 @@
 "use server";
 
+import * as React from "react";
 import { google } from "googleapis";
 import { Resend, type CreateEmailOptions } from "resend";
 import { z } from "zod";
 
+import { ApplicationConfirmationEmail } from "@/components/emails/ApplicationConfirmation";
+import { ApplicationNotificationEmail } from "@/components/emails/ApplicationNotificationEmail";
 import { getGoogleConfig } from "@/lib/google-config";
 
 const DEFAULT_FROM_ADDRESS = "Haiti Bright Futures <onboarding@resend.dev>";
@@ -43,15 +46,6 @@ async function fileToAttachment(file: File) {
   };
 }
 
-function escapeHtml(value: string) {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-}
-
 function getContextErrorDetails(message: string, context: string) {
   const prefix = `${context}:`;
   return message.startsWith(prefix) ? message.slice(prefix.length).trim() : message;
@@ -74,6 +68,16 @@ function getNotificationRecipients() {
 
 function getFromAddress() {
   return process.env.RESEND_FROM_EMAIL?.trim() || DEFAULT_FROM_ADDRESS;
+}
+
+function getPublicSiteUrl() {
+  const value = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (value) return value.replace(/\/$/, "");
+  return "https://hbfhaiti.org";
+}
+
+function getEmailLogoUrl() {
+  return `${getPublicSiteUrl()}/api/logo`;
 }
 
 function getResendClient() {
@@ -123,6 +127,7 @@ export async function submitApplication(formData: FormData) {
       consent: getString(formData, "consent"),
     });
     const applicationId = Math.random().toString(36).substring(7).toUpperCase();
+    const submittedAt = new Date().toLocaleString("en-US");
 
     const googleConfig = getGoogleConfig();
 
@@ -144,7 +149,7 @@ export async function submitApplication(formData: FormData) {
         requestBody: {
           values: [
             [
-              new Date().toLocaleString("en-US"),
+              submittedAt,
               applicationId,
               validatedData.firstName,
               validatedData.lastName,
@@ -186,23 +191,27 @@ export async function submitApplication(formData: FormData) {
           to: getNotificationRecipients(),
           replyTo: validatedData.email,
           subject: "New Application Submission from Haiti Bright Futures",
-          html: `
-            <h2>New scholarship application</h2>
-            <p><strong>Application ID:</strong> ${escapeHtml(applicationId)}</p>
-            <p><strong>Name:</strong> ${escapeHtml(applicantName)}</p>
-            <p><strong>Date of birth:</strong> ${escapeHtml(validatedData.dateOfBirth)}</p>
-            <p><strong>School:</strong> ${escapeHtml(validatedData.school)}</p>
-            <p><strong>Current grade:</strong> ${escapeHtml(validatedData.grade)}</p>
-            <p><strong>Address:</strong> ${escapeHtml(validatedData.address)}</p>
-            <p><strong>Phone:</strong> ${escapeHtml(validatedData.phone)}</p>
-            <p><strong>Email:</strong> ${escapeHtml(validatedData.email)}</p>
-            <p><strong>Sex:</strong> ${escapeHtml(validatedData.sex)}</p>
-            <p><strong>NIF/CIN:</strong> ${escapeHtml(validatedData.nifCin)}</p>
-            <p><strong>Guardian:</strong> ${escapeHtml(validatedData.guardianName)}</p>
-            <p><strong>Guardian phone:</strong> ${escapeHtml(validatedData.guardianPhone)}</p>
-            <p><strong>Guardian email:</strong> ${escapeHtml(validatedData.guardianEmail)}</p>
-            <p><strong>Consent:</strong> Granted</p>
-          `,
+          react: React.createElement(ApplicationNotificationEmail, {
+            logoUrl: getEmailLogoUrl(),
+            submittedAt,
+            applicationId,
+            firstName: validatedData.firstName,
+            lastName: validatedData.lastName,
+            dateOfBirth: validatedData.dateOfBirth,
+            school: validatedData.school,
+            grade: validatedData.grade,
+            address: validatedData.address,
+            phone: validatedData.phone,
+            email: validatedData.email,
+            sex: validatedData.sex,
+            nifCin: validatedData.nifCin,
+            guardianName: validatedData.guardianName,
+            guardianPhone: validatedData.guardianPhone,
+            guardianEmail: validatedData.guardianEmail,
+            essayName: essay.name,
+            studentNifFileName: studentNifFile?.name || undefined,
+            photoName: photo?.name || undefined,
+          }),
           attachments,
         },
         "Failed to send admin notification email",
@@ -215,13 +224,11 @@ export async function submitApplication(formData: FormData) {
           to: validatedData.email,
           replyTo: getNotificationRecipients(),
           subject: "Confirmation de votre soumission",
-          html: `
-            <p>Cher candidat,</p>
-            <p>Nous vous remercions d'avoir soumis votre candidature pour la bourse Haiti Bright Futures.</p>
-            <p>Votre identifiant de candidature est <strong>#${escapeHtml(applicationId)}</strong>.</p>
-            <p>Notre comite d'examen evaluera votre candidature et les candidats retenus seront contactes pour la prochaine etape.</p>
-            <p>Cordialement,<br>Comite des bourses Haiti Bright Futures</p>
-          `,
+          react: React.createElement(ApplicationConfirmationEmail, {
+            logoUrl: getEmailLogoUrl(),
+            studentName: applicantName,
+            applicationId,
+          }),
         },
         "Failed to send applicant confirmation email",
       );
