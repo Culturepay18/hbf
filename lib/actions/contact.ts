@@ -11,6 +11,7 @@ import { getGoogleConfig } from "@/lib/google-config";
 
 const DEFAULT_FROM_ADDRESS = "Haiti Bright Futures <onboarding@resend.dev>";
 const DEFAULT_NOTIFICATION_EMAIL = "info@hbfhaiti.org";
+const DEFAULT_CONTACT_SHEET_RANGE = "A:E";
 
 const contactSchema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -66,6 +67,20 @@ function getResendClient() {
   return apiKey ? new Resend(apiKey) : null;
 }
 
+function getContactSpreadsheetId() {
+  const configured = process.env.GOOGLE_CONTACT_SHEET_ID?.trim();
+  if (!configured) {
+    return process.env.GOOGLE_SHEET_ID?.trim() || "";
+  }
+
+  const urlMatch = configured.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  return urlMatch ? urlMatch[1] : configured;
+}
+
+function getContactSheetRange() {
+  return process.env.GOOGLE_CONTACT_SHEET_RANGE?.trim() || DEFAULT_CONTACT_SHEET_RANGE;
+}
+
 async function sendEmailOrThrow(resend: Resend, payload: CreateEmailOptions, context: string) {
   const { data, error } = await resend.emails.send(payload);
 
@@ -85,8 +100,9 @@ export async function submitContactForm(formData: z.infer<typeof contactSchema>)
     const googleConfig = getGoogleConfig();
     const submittedAt = new Date().toLocaleString("en-US");
 
-    if (process.env.GOOGLE_SHEET_ID && googleConfig) {
-      console.log("Tentative de connexion a Google Sheets avec l'ID:", process.env.GOOGLE_SHEET_ID);
+    const spreadsheetId = getContactSpreadsheetId();
+    if (spreadsheetId && googleConfig) {
+      console.log("Tentative de connexion a Google Sheets avec l'ID:", spreadsheetId);
 
       const auth = new google.auth.GoogleAuth({
         credentials: {
@@ -100,8 +116,8 @@ export async function submitContactForm(formData: z.infer<typeof contactSchema>)
 
       try {
         await sheets.spreadsheets.values.append({
-          spreadsheetId: process.env.GOOGLE_SHEET_ID,
-          range: "'Feuille 1'!A:E",
+          spreadsheetId,
+          range: getContactSheetRange(),
           valueInputOption: "USER_ENTERED",
           requestBody: {
             values: [

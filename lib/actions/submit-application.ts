@@ -4,7 +4,6 @@ import * as React from "react";
 import { google } from "googleapis";
 import { Resend, type CreateEmailOptions } from "resend";
 import { z } from "zod";
-import { Readable } from "stream";
 
 import { ApplicationConfirmationEmail } from "@/components/emails/ApplicationConfirmation";
 import { ApplicationNotificationEmail } from "@/components/emails/ApplicationNotificationEmail";
@@ -70,9 +69,10 @@ async function uploadFileToSupabase(file: File, applicationId: string, type: str
       .getPublicUrl(data.path);
 
     return publicUrl;
-  } catch (error: any) {
-    console.error(`Error uploading ${file.name} to Supabase:`, error.message || error);
-    return `ERROR: ${error.message || 'Upload failed'}`;
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Upload failed";
+    console.error(`Error uploading ${file.name} to Supabase:`, message);
+    return `ERROR: ${message}`;
   }
 }
 
@@ -113,6 +113,21 @@ function getEmailLogoUrl() {
 function getResendClient() {
   const apiKey = process.env.RESEND_API_KEY?.trim();
   return apiKey ? new Resend(apiKey) : null;
+}
+
+function sanitizeNameForId(value: string) {
+  return value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase();
+}
+
+function getNamePrefixForId(value: string) {
+  return sanitizeNameForId(value).slice(0, 2);
+}
+
+function generateApplicationId(firstName: string, lastName: string) {
+  const digits = Math.floor(100000 + Math.random() * 900000).toString();
+  const first = getNamePrefixForId(firstName);
+  const last = getNamePrefixForId(lastName);
+  return `HBF-${digits}-${first}${last}`;
 }
 
 async function sendEmailOrThrow(resend: Resend, payload: CreateEmailOptions, context: string) {
@@ -156,7 +171,7 @@ export async function submitApplication(formData: FormData) {
       guardianEmail: getString(formData, "guardianEmail"),
       consent: getString(formData, "consent"),
     });
-    const applicationId = Math.random().toString(36).substring(7).toUpperCase();
+    const applicationId = generateApplicationId(validatedData.firstName, validatedData.lastName);
     const submittedAt = new Date().toLocaleString("en-US");
 
     const googleConfig = getGoogleConfig();
@@ -174,6 +189,23 @@ export async function submitApplication(formData: FormData) {
       });
 
       const sheets = google.sheets({ version: "v4", auth });
+
+      try {
+        const existingEmailsResponse = await sheets.spreadsheets.values.get({
+          spreadsheetId: process.env.GOOGLE_SHEET_ID,
+          range: "'Feuille 1'!J:J",
+        });
+
+        const existingEmails = (existingEmailsResponse.data.values || [])
+          .map((row) => String(row[0] ?? "").trim().toLowerCase())
+          .filter(Boolean);
+
+        if (existingEmails.includes(validatedData.email.trim().toLowerCase())) {
+          return { success: false, error: "Application already submitted." };
+        }
+      } catch (duplicateCheckError) {
+        console.error("Failed to check duplicate application email:", duplicateCheckError);
+      }
       
       // Upload files to Supabase and get their links
       const uploadResults = await Promise.all([
