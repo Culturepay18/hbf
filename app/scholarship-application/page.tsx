@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";
 import { ApplicationForm } from "@/components/sections/ApplicationForm";
 import { supabase } from "@/lib/supabase";
 import { motion } from "framer-motion";
-import { Timer, AlertTriangle } from "lucide-react";
+import { Timer } from "lucide-react";
 
 export default function ScholarshipApplicationPage() {
   const [isActive, setIsActive] = useState<boolean | null>(null);
@@ -39,7 +40,7 @@ export default function ScholarshipApplicationPage() {
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-hbf-green border-t-transparent" />
         </div>
       ) : isActive === false ? (
-        <div className="pt-48 pb-32 px-6">
+        <div className="px-6 py-12 min-h-[calc(100svh-5rem)] flex items-center md:block md:min-h-0 md:pt-48 md:pb-32">
           <div className="max-w-3xl mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -56,12 +57,12 @@ export default function ScholarshipApplicationPage() {
                 The current scholarship application window has closed. Thank you to everyone who applied! Our team is currently reviewing submissions.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
-                <a href="/news" className="bg-hbf-dark text-white px-8 py-4 rounded-full font-bold hover:bg-black transition-all">
+                <Link href="/news" className="bg-hbf-dark text-white px-8 py-4 rounded-full font-bold hover:bg-black transition-all">
                   Read latest news
-                </a>
-                <a href="/contact" className="border border-black/10 px-8 py-4 rounded-full font-bold hover:bg-black/5 transition-all">
+                </Link>
+                <Link href="/contact" className="border border-black/10 px-8 py-4 rounded-full font-bold hover:bg-black/5 transition-all">
                   Contact us
-                </a>
+                </Link>
               </div>
             </motion.div>
           </div>

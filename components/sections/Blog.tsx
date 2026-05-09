@@ -34,12 +34,12 @@ export function Blog() {
   }, []);
 
   return (
-    <section id="blog" className="bg-[#fcfbf7] py-24">
+    <section id="blog" className="bg-[#fcfbf7] py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-16 gap-4 md:gap-8">
           <div className="max-w-2xl">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-hbf-green mb-4">Latest Updates</p>
-            <h2 className="text-4xl md:text-5xl font-bold leading-tight tracking-tight text-hbf-dark">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-hbf-green mb-3">Latest Updates</p>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-[1.05] tracking-tight text-hbf-dark break-words">
               Our Latest <span className="text-hbf-green">Stories</span>
             </h2>
           </div>

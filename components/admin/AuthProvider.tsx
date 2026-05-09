@@ -48,11 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex h-screen w-screen items-center justify-center bg-[#f8f6f0]">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-hbf-green border-t-transparent"></div>
-      </div>
-    );
+    return null;
   }
 
   // If not logged in, show login form instead of children

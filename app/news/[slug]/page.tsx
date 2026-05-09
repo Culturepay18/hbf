@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import ReactMarkdown from "react-markdown";
-import { Calendar, ArrowLeft, Share2 } from "lucide-react";
+import { Calendar, ArrowLeft, Share2, ImageIcon } from "lucide-react";
 import Link from "next/link";
 import { Navbar } from "@/components/sections/Navbar";
 import { Footer } from "@/components/sections/Footer";

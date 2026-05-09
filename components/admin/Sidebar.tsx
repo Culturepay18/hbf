@@ -20,13 +20,17 @@ const navigation = [
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
+interface SidebarProps {
+  className?: string;
+  onNavigate?: () => void;
+}
 
-export function Sidebar() {
+export function Sidebar({ className, onNavigate }: SidebarProps) {
   const pathname = usePathname();
   const { signOut } = useAuth();
 
   return (
-    <div className="flex h-full w-64 flex-col bg-[#1A1A1A] text-white">
+    <div className={cn("flex h-full w-64 flex-col bg-[#1A1A1A] text-white", className)}>
       {/* Logo Area */}
       <div className="flex shrink-0 flex-col items-center px-6 pt-8 pb-4">
         <Link href="/admin" className="flex flex-col items-center">
@@ -49,6 +53,7 @@ export function Sidebar() {
             <Link
               key={item.name}
               href={item.href}
+              onClick={onNavigate}
               className={cn(
                 "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
                 isActive
@@ -71,7 +76,10 @@ export function Sidebar() {
       {/* Bottom Actions */}
       <div className="border-t border-white/10 p-4">
         <button
-          onClick={signOut}
+          onClick={async () => {
+            onNavigate?.();
+            await signOut();
+          }}
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/70 transition-colors hover:bg-white/10 hover:text-white"
         >
           <LogOut className="h-5 w-5 shrink-0 text-white/50" />
