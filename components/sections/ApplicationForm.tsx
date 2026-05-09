@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, CheckCircle2, Loader2, Send } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -28,10 +28,10 @@ const schema = z.object({
   phone: z.string().min(8, "Phone number is required"),
   email: z.string().email("Invalid email address"),
   sex: z.enum(["Male", "Female"], { error: "Sex is required" }),
-  nifCin: z.string().min(2, "NIF/CIN number is required"),
+  nifCin: z.string().regex(/^\d*$/, "NIF/CIN must contain only digits").optional().or(z.literal("")),
   guardianName: z.string().min(2, "Guardian name is required"),
-  guardianPhone: z.string().min(8, "Guardian phone is required"),
-  guardianEmail: z.string().email("Invalid guardian email address"),
+  guardianPhone: z.string().optional().or(z.literal("")),
+  guardianEmail: z.string().email("Invalid email address").optional().or(z.literal("")),
   essay: requiredFile("Essay file is required"),
   studentNifFile: optionalFile,
   photo: optionalFile,
@@ -119,15 +119,25 @@ export function ApplicationForm() {
     setCurrentStep((step) => Math.max(step - 1, 0));
   };
 
-  const onSubmit = async (_data: FormData, event?: React.BaseSyntheticEvent) => {
-    const form = event?.target as HTMLFormElement | undefined;
-    if (!form) return;
-
+  const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     setError(null);
 
     try {
-      const result = await submitApplication(new FormData(form));
+      const fd = new FormData();
+      
+      // Manually build FormData from react-hook-form data
+      // to ensure hidden fields from previous steps are included
+      Object.entries(data).forEach(([key, value]) => {
+        if (value instanceof FileList) {
+          if (value.length > 0) fd.append(key, value[0]);
+        } else if (value !== undefined && value !== null) {
+          fd.append(key, String(value));
+        }
+      });
+
+      const result = await submitApplication(fd);
+
       if (result.success) {
         setIsSuccess(true);
         setCurrentStep(0);
@@ -135,7 +145,8 @@ export function ApplicationForm() {
       } else {
         setError(result.error || "An error occurred. Please try again.");
       }
-    } catch {
+    } catch (err) {
+      console.error("Submission error details:", err);
       setError("An unexpected error occurred.");
     } finally {
       setIsSubmitting(false);
@@ -286,12 +297,14 @@ export function ApplicationForm() {
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="space-y-2">
                 <label className="text-sm font-semibold text-hbf-dark">Current grade</label>
-                <input {...register("grade")} className={inputClass(Boolean(errors.grade))} placeholder="Current Grade" />
+                <select {...register("grade")} className={inputClass(Boolean(errors.grade))}>
+                  <option value="NS3">NS3</option>
+                </select>
                 <FieldError message={errors.grade?.message} />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-hbf-dark">NIF/CIN number</label>
-                <input {...register("nifCin")} className={inputClass(Boolean(errors.nifCin))} placeholder="ID" />
+                <label className="text-sm font-semibold text-hbf-dark">NIF/CIN number <span className="text-xs font-normal text-hbf-muted">(Optional)</span></label>
+                <input {...register("nifCin")} className={inputClass(Boolean(errors.nifCin))} placeholder="ID (Numbers only)" />
                 <FieldError message={errors.nifCin?.message} />
               </div>
             </div>
@@ -317,7 +330,7 @@ export function ApplicationForm() {
             </div>
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-hbf-dark">Guardian phone number</label>
+                <label className="text-sm font-semibold text-hbf-dark">Guardian phone <span className="text-xs font-normal text-hbf-muted">(Optional)</span></label>
                 <input
                   {...register("guardianPhone")}
                   className={inputClass(Boolean(errors.guardianPhone))}
@@ -326,7 +339,7 @@ export function ApplicationForm() {
                 <FieldError message={errors.guardianPhone?.message} />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-semibold text-hbf-dark">Guardian email address</label>
+                <label className="text-sm font-semibold text-hbf-dark">Guardian email <span className="text-xs font-normal text-hbf-muted">(Optional)</span></label>
                 <input
                   {...register("guardianEmail")}
                   type="email"

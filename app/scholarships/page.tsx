@@ -261,7 +261,7 @@ export default function ScholarshipsPage() {
               <FileText className="text-hbf-green" size={32} />
               <p className="mt-6 text-sm font-bold uppercase tracking-widest text-hbf-orange">Phase 2</p>
               <h2 className="mt-2 text-2xl font-bold text-hbf-dark leading-tight">Essay Submission</h2>
-              <p className="mt-4 text-hbf-muted font-medium">Nominees write a compelling essay (dissertation) on leadership and community impact.</p>
+              <p className="mt-4 text-hbf-muted font-medium">Nominees write a compelling essay on leadership and community impact.</p>
             </div>
             <div className="rounded-[2rem] border border-black/5 bg-[#f8f6f0]/50 p-10 shadow-soft transition-transform hover:-translate-y-1">
               <Trophy className="text-hbf-green" size={32} />

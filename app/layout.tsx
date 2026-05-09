@@ -31,6 +31,10 @@ export const metadata: Metadata = {
     locale: "en_US",
     type: "website",
   },
+  icons: {
+    icon: "/images/hbf-logo-transparent.png",
+    apple: "/images/hbf-logo-transparent.png",
+  },
 };
 
 export default function RootLayout({

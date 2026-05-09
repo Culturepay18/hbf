@@ -4,10 +4,12 @@ import * as React from "react";
 import { google } from "googleapis";
 import { Resend, type CreateEmailOptions } from "resend";
 import { z } from "zod";
+import { Readable } from "stream";
 
 import { ApplicationConfirmationEmail } from "@/components/emails/ApplicationConfirmation";
 import { ApplicationNotificationEmail } from "@/components/emails/ApplicationNotificationEmail";
 import { getGoogleConfig } from "@/lib/google-config";
+import { supabase } from "@/lib/supabase";
 
 const DEFAULT_FROM_ADDRESS = "Haiti Bright Futures <onboarding@resend.dev>";
 const DEFAULT_NOTIFICATION_EMAIL = "info@hbfhaiti.org";
@@ -17,16 +19,16 @@ const schema = z.object({
   lastName: z.string().min(2, "Last name is required"),
   dateOfBirth: z.string().min(1, "Date of birth is required"),
   school: z.string().min(2, "School is required"),
-  grade: z.string().min(1, "Current grade is required"),
+  grade: z.enum(["NS3"], { error: "Seulement NS3 est autorisé pour le moment" }),
   address: z.string().min(5, "Address is required"),
   phone: z.string().min(8, "Phone number is required"),
   email: z.string().email("Invalid email address"),
   sex: z.enum(["Male", "Female"], { error: "Sex is required" }),
-  nifCin: z.string().min(2, "NIF/CIN number is required"),
+  nifCin: z.string().regex(/^\d*$/, "NIF/CIN ne doit contenir que des chiffres").optional().or(z.literal("")),
   guardianName: z.string().min(2, "Guardian name is required"),
-  guardianPhone: z.string().min(8, "Guardian phone number is required"),
-  guardianEmail: z.string().email("Invalid guardian email address"),
-  consent: z.literal("on", { error: "Consent agreement is required" }),
+  guardianPhone: z.string().optional().or(z.literal("")),
+  guardianEmail: z.string().email("Invalid guardian email address").optional().or(z.literal("")).or(z.string().length(0)),
+  consent: z.enum(["on", "true"], { error: "Consent agreement is required" }),
 });
 
 function getString(formData: FormData, key: string) {
@@ -44,6 +46,34 @@ async function fileToAttachment(file: File) {
     filename: file.name,
     content: Buffer.from(await file.arrayBuffer()),
   };
+}
+
+async function uploadFileToSupabase(file: File, applicationId: string, type: string) {
+  try {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${applicationId}/${type}-${Date.now()}.${fileExt}`;
+    
+    console.log(`Attempting to upload ${file.name} to Supabase storage: ${fileName}...`);
+    
+    const buffer = await file.arrayBuffer();
+    const { data, error } = await supabase.storage
+      .from("applications")
+      .upload(fileName, buffer, {
+        contentType: file.type,
+        upsert: true,
+      });
+
+    if (error) throw error;
+
+    const { data: { publicUrl } } = supabase.storage
+      .from("applications")
+      .getPublicUrl(data.path);
+
+    return publicUrl;
+  } catch (error: any) {
+    console.error(`Error uploading ${file.name} to Supabase:`, error.message || error);
+    return `ERROR: ${error.message || 'Upload failed'}`;
+  }
 }
 
 function getContextErrorDetails(message: string, context: string) {
@@ -137,41 +167,58 @@ export async function submitApplication(formData: FormData) {
           client_email: googleConfig.client_email,
           private_key: googleConfig.private_key,
         },
-        scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+        scopes: [
+          "https://www.googleapis.com/auth/spreadsheets",
+          "https://www.googleapis.com/auth/drive.file"
+        ],
       });
 
       const sheets = google.sheets({ version: "v4", auth });
+      
+      // Upload files to Supabase and get their links
+      const uploadResults = await Promise.all([
+        essay ? uploadFileToSupabase(essay, applicationId, "essay") : null,
+        studentNifFile ? uploadFileToSupabase(studentNifFile, applicationId, "nif") : null,
+        photo ? uploadFileToSupabase(photo, applicationId, "photo") : null,
+      ]);
 
-      await sheets.spreadsheets.values.append({
-        spreadsheetId: process.env.GOOGLE_SHEET_ID,
-        range: "'Feuille 1'!A:U",
-        valueInputOption: "USER_ENTERED",
-        requestBody: {
-          values: [
-            [
-              submittedAt,
-              applicationId,
-              validatedData.firstName,
-              validatedData.lastName,
-              validatedData.dateOfBirth,
-              validatedData.school,
-              validatedData.grade,
-              validatedData.address,
-              validatedData.phone,
-              validatedData.email,
-              validatedData.sex,
-              validatedData.nifCin,
-              validatedData.guardianName,
-              validatedData.guardianPhone,
-              validatedData.guardianEmail,
-              essay.name,
-              studentNifFile?.name || "",
-              photo?.name || "",
-              "Consent granted",
+      const [essayLink, nifLink, photoLink] = uploadResults;
+
+      try {
+        await sheets.spreadsheets.values.append({
+          spreadsheetId: process.env.GOOGLE_SHEET_ID,
+          range: "'Feuille 1'!A:U",
+          valueInputOption: "USER_ENTERED",
+          requestBody: {
+            values: [
+              [
+                submittedAt,
+                applicationId,
+                validatedData.firstName,
+                validatedData.lastName,
+                validatedData.dateOfBirth,
+                validatedData.school,
+                validatedData.grade,
+                validatedData.address,
+                validatedData.phone,
+                validatedData.email,
+                validatedData.sex,
+                validatedData.nifCin,
+                validatedData.guardianName,
+                validatedData.guardianPhone,
+                validatedData.guardianEmail,
+                essayLink?.startsWith('http') ? `=HYPERLINK("${essayLink}"; "${essay.name.replace(/"/g, '""')}")` : (essayLink || essay.name),
+                nifLink?.startsWith('http') ? `=HYPERLINK("${nifLink}"; "${studentNifFile?.name.replace(/"/g, '""')}")` : (nifLink || studentNifFile?.name || ""),
+                photoLink?.startsWith('http') ? `=HYPERLINK("${photoLink}"; "${photo?.name.replace(/"/g, '""')}")` : (photoLink || photo?.name || ""),
+                "Consent granted",
+              ],
             ],
-          ],
-        },
-      });
+          },
+        });
+      } catch (sheetError) {
+        console.error("Failed to append to Google Sheet:", sheetError);
+      }
+
     } else {
       console.warn("Google Sheets credentials missing, skipping sheet update.");
     }

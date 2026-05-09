@@ -24,6 +24,7 @@ export default function Home() {
         <Stats />
         <WhyHBF />
         <Scholarships />
+        <Blog />
         <ProjectPreview />
         <Team />
         <SupportMission />
