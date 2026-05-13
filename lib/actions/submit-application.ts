@@ -190,10 +190,32 @@ export async function submitApplication(formData: FormData) {
 
       const sheets = google.sheets({ version: "v4", auth });
 
+      const possibleSheets = ["Feuille 1", "Sheet 1"];
+      let activeSheetName = "";
+
+      // Try to find which sheet exists
+      for (const name of possibleSheets) {
+        try {
+          await sheets.spreadsheets.values.get({
+            spreadsheetId: process.env.GOOGLE_SHEET_ID,
+            range: `'${name}'!A1`,
+          });
+          activeSheetName = name;
+          break;
+        } catch (e) {
+          continue;
+        }
+      }
+
+      if (!activeSheetName) {
+        console.warn("Could not find 'Feuille 1' or 'Sheet 1', falling back to 'Feuille 1'");
+        activeSheetName = "Feuille 1";
+      }
+
       try {
         const existingEmailsResponse = await sheets.spreadsheets.values.get({
           spreadsheetId: process.env.GOOGLE_SHEET_ID,
-          range: "'Feuille 1'!J:J",
+          range: `'${activeSheetName}'!J:J`,
         });
 
         const existingEmails = (existingEmailsResponse.data.values || [])
@@ -201,10 +223,14 @@ export async function submitApplication(formData: FormData) {
           .filter(Boolean);
 
         if (existingEmails.includes(validatedData.email.trim().toLowerCase())) {
-          return { success: false, error: "Application already submitted." };
+          return { success: false, error: "Une demande a déjà été soumise avec cet email." };
         }
       } catch (duplicateCheckError) {
-        console.error("Failed to check duplicate application email:", duplicateCheckError);
+        console.error("Duplicate check failed:", duplicateCheckError);
+        // If it's a permission error, we should probably stop here or report it
+        if (String(duplicateCheckError).includes("403")) {
+          return { success: false, error: "Erreur de permission Google Sheets (Live). Vérifiez le partage du fichier." };
+        }
       }
       
       // Upload files to Supabase and get their links
@@ -219,7 +245,7 @@ export async function submitApplication(formData: FormData) {
       try {
         await sheets.spreadsheets.values.append({
           spreadsheetId: process.env.GOOGLE_SHEET_ID,
-          range: "'Feuille 1'!A:U",
+          range: `'${activeSheetName}'!A:U`,
           valueInputOption: "USER_ENTERED",
           requestBody: {
             values: [
@@ -239,9 +265,9 @@ export async function submitApplication(formData: FormData) {
                 validatedData.guardianName,
                 validatedData.guardianPhone,
                 validatedData.guardianEmail,
-                essayLink?.startsWith('http') ? `=HYPERLINK("${essayLink}"; "${essay.name.replace(/"/g, '""')}")` : (essayLink || essay.name),
-                nifLink?.startsWith('http') ? `=HYPERLINK("${nifLink}"; "${studentNifFile?.name.replace(/"/g, '""')}")` : (nifLink || studentNifFile?.name || ""),
-                photoLink?.startsWith('http') ? `=HYPERLINK("${photoLink}"; "${photo?.name.replace(/"/g, '""')}")` : (photoLink || photo?.name || ""),
+                essayLink || "",
+                nifLink || "",
+                photoLink || "",
                 "Consent granted",
               ],
             ],
@@ -249,6 +275,7 @@ export async function submitApplication(formData: FormData) {
         });
       } catch (sheetError) {
         console.error("Failed to append to Google Sheet:", sheetError);
+        return { success: false, error: "Erreur lors de l'enregistrement dans Google Sheets. Vérifiez le partage." };
       }
 
     } else {

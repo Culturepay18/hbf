@@ -102,8 +102,6 @@ export async function submitContactForm(formData: z.infer<typeof contactSchema>)
 
     const spreadsheetId = getContactSpreadsheetId();
     if (spreadsheetId && googleConfig) {
-      console.log("Tentative de connexion a Google Sheets avec l'ID:", spreadsheetId);
-
       const auth = new google.auth.GoogleAuth({
         credentials: {
           client_email: googleConfig.client_email,
@@ -114,10 +112,27 @@ export async function submitContactForm(formData: z.infer<typeof contactSchema>)
 
       const sheets = google.sheets({ version: "v4", auth });
 
+      // Detect sheet name (Feuille 1 or Sheet 1)
+      const possibleSheets = ["Feuille 1", "Sheet 1"];
+      let activeSheetName = "";
+      
+      for (const name of possibleSheets) {
+        try {
+          await sheets.spreadsheets.values.get({
+            spreadsheetId,
+            range: `'${name}'!A1`,
+          });
+          activeSheetName = name;
+          break;
+        } catch (e) { continue; }
+      }
+
+      if (!activeSheetName) activeSheetName = "Feuille 1";
+
       try {
         await sheets.spreadsheets.values.append({
           spreadsheetId,
-          range: getContactSheetRange(),
+          range: activeSheetName === "Feuille 1" ? "Feuille 1!A:E" : "Sheet 1!A:E",
           valueInputOption: "USER_ENTERED",
           requestBody: {
             values: [
@@ -131,13 +146,12 @@ export async function submitContactForm(formData: z.infer<typeof contactSchema>)
             ],
           },
         });
-        console.log("Donnees envoyees avec succes !");
       } catch (sheetError: unknown) {
         const message = getErrorMessage(sheetError);
-        console.error("Erreur specifique Google Sheets (contact):", message);
+        console.error("Erreur Google Sheets (contact):", message);
       }
     } else {
-      console.warn("Google Sheets config missing for contact form, skipping sheet update.");
+      console.warn("Google Sheets config missing for contact form.");
     }
 
     const resend = getResendClient();
