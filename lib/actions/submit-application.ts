@@ -145,6 +145,13 @@ async function sendEmailOrThrow(resend: Resend, payload: CreateEmailOptions, con
   return data.id;
 }
 
+function getSpreadsheetId() {
+  const configured = process.env.GOOGLE_SHEET_ID?.trim();
+  if (!configured) return "";
+  const urlMatch = configured.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  return urlMatch ? urlMatch[1] : configured;
+}
+
 export async function submitApplication(formData: FormData) {
   try {
     const essay = getFile(formData, "essay");
@@ -197,7 +204,7 @@ export async function submitApplication(formData: FormData) {
       for (const name of possibleSheets) {
         try {
           await sheets.spreadsheets.values.get({
-            spreadsheetId: process.env.GOOGLE_SHEET_ID,
+            spreadsheetId: getSpreadsheetId(),
             range: `'${name}'!A1`,
           });
           activeSheetName = name;
@@ -214,7 +221,7 @@ export async function submitApplication(formData: FormData) {
 
       try {
         const existingEmailsResponse = await sheets.spreadsheets.values.get({
-          spreadsheetId: process.env.GOOGLE_SHEET_ID,
+          spreadsheetId: getSpreadsheetId(),
           range: `'${activeSheetName}'!J:J`,
         });
 
@@ -244,7 +251,7 @@ export async function submitApplication(formData: FormData) {
 
       try {
         await sheets.spreadsheets.values.append({
-          spreadsheetId: process.env.GOOGLE_SHEET_ID,
+          spreadsheetId: getSpreadsheetId(),
           range: `'${activeSheetName}'!A:U`,
           valueInputOption: "USER_ENTERED",
           requestBody: {
