@@ -113,7 +113,7 @@ export default function AdminScholarships() {
     <div className="admin-scholarships-page pb-20">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-hbf-dark">Scholarships & Stats</h1>
+          <h1 className="text-3xl font-bold text-hbf-dark">Scholarships</h1>
           <p className="mt-1 text-hbf-muted">Manage programs, finalist teams, and competition statistics.</p>
         </div>
         <button

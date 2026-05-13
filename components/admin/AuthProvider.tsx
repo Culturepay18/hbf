@@ -43,6 +43,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Inactivity auto-logout (15 minutes)
+  useEffect(() => {
+    if (!session) return;
+
+    const INACTIVITY_LIMIT = 15 * 60 * 1000; // 15 minutes
+
+    const checkInactivity = async () => {
+      const lastActive = localStorage.getItem("hbf_admin_last_active");
+      if (lastActive && Date.now() - parseInt(lastActive, 10) > INACTIVITY_LIMIT) {
+        localStorage.removeItem("hbf_admin_last_active");
+        await supabase.auth.signOut();
+      }
+    };
+
+    const resetTimer = () => {
+      localStorage.setItem("hbf_admin_last_active", Date.now().toString());
+    };
+
+    // Check immediately on mount/session change
+    checkInactivity();
+    resetTimer();
+
+    const events = ["mousemove", "keydown", "mousedown", "scroll", "touchstart"];
+    
+    let throttleTimer: NodeJS.Timeout | null = null;
+    const handleActivity = () => {
+      if (throttleTimer) return;
+      throttleTimer = setTimeout(() => {
+        resetTimer();
+        throttleTimer = null;
+      }, 1000);
+    };
+
+    events.forEach((event) => window.addEventListener(event, handleActivity));
+
+    // Check periodically
+    const intervalId = setInterval(checkInactivity, 60 * 1000);
+
+    return () => {
+      events.forEach((event) => window.removeEventListener(event, handleActivity));
+      clearInterval(intervalId);
+      if (throttleTimer) clearTimeout(throttleTimer);
+    };
+  }, [session]);
+
   const signOut = async () => {
     await supabase.auth.signOut();
   };

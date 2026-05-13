@@ -33,7 +33,7 @@ export default function TeamPage() {
             {team.map((member, index) => (
               <div 
                 key={member.name} 
-                className={`flex flex-col md:flex-row gap-12 items-center ${
+                className={`flex flex-col md:flex-row gap-12 items-start ${
                   index % 2 === 1 ? 'md:flex-row-reverse' : ''
                 }`}
               >
