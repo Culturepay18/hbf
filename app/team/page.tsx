@@ -4,7 +4,7 @@ import { Footer } from "@/components/sections/Footer";
 import { team } from "@/lib/data";
 
 export const metadata = {
-  title: "Our Team | Haiti Bright Futures",
+  title: "Haiti Bright Futures",
   description: "Meet the dedicated individuals behind Haiti Bright Futures, working to empower the next generation of Haitian leaders.",
 };
 

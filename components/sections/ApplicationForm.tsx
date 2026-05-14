@@ -292,7 +292,7 @@ export function ApplicationForm() {
                 ))}
               </select>
               <FieldError message={errors.school?.message} />
-              <p className="text-[10px] text-hbf-muted italic mt-1">Only students from partner schools can apply. Contact us if your school is missing.</p>
+              <p className="text-[10px] text-hbf-muted italic mt-1">Only students from partner schools can apply. Get in touch if your school is missing.</p>
             </div>
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="space-y-2">

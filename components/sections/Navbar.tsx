@@ -58,11 +58,6 @@ const navigationGroups: NavigationGroup[] = [
         href: "/team",
         description: "Meet the board and people building the organization.",
       },
-      {
-        label: "Contact us",
-        href: "/contact",
-        description: "Reach the HBF team directly.",
-      },
     ],
   },
   {

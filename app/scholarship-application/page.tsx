@@ -61,7 +61,7 @@ export default function ScholarshipApplicationPage() {
                   Read latest news
                 </Link>
                 <Link href="/contact" className="border border-black/10 px-8 py-4 rounded-full font-bold hover:bg-black/5 transition-all">
-                  Contact us
+                  Get in touch
                 </Link>
               </div>
             </motion.div>

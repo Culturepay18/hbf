@@ -172,5 +172,5 @@ export const navLinks = [
   { label: "About us", href: "/about" },
   { label: "Scholarships", href: "/scholarships" },
   { label: "Team", href: "/team" },
-  { label: "Contact us", href: "/contact" },
+  { label: "Contact", href: "/contact" },
 ];

@@ -11,7 +11,7 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://hbfhaiti.org"),
-  title: "Haiti Bright Futures | Scholarships and youth opportunities in Haiti",
+  title: "Haiti Bright Futures",
   description:
     "Haiti Bright Futures creates opportunities for students in Haiti through scholarships, sports, and youth development programs.",
   openGraph: {

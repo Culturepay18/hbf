@@ -452,7 +452,7 @@ export default function ScholarshipsPage() {
               </div>
               <h3 className="text-3xl font-bold mb-4">Support & Resources</h3>
               <p className="text-white/80 mb-10 text-lg">
-                Need help? Contact us via WhatsApp or download our guides.
+                Need help? Get in touch via WhatsApp or download our guides.
               </p>
 
               <div className="space-y-4">
