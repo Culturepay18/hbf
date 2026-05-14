@@ -26,7 +26,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error("Auth session error:", error.message);
+        // If refresh token is invalid, clear everything
+        if (error.message.includes("Refresh Token Not Found") || error.message.includes("invalid")) {
+          supabase.auth.signOut();
+        }
+      }
       setSession(session);
       setUser(session?.user ?? null);
       setIsLoading(false);
@@ -35,7 +42,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT") {
+        localStorage.removeItem("hbf_admin_last_active");
+      }
+      
       setSession(session);
       setUser(session?.user ?? null);
     });
@@ -47,14 +58,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!session) return;
 
-    const INACTIVITY_LIMIT = 15 * 60 * 1000; // 15 minutes
+    const INACTIVITY_LIMIT = 7 * 60 * 1000; // 7 minutes
 
     const checkInactivity = async () => {
       const lastActive = localStorage.getItem("hbf_admin_last_active");
-      if (lastActive && Date.now() - parseInt(lastActive, 10) > INACTIVITY_LIMIT) {
-        localStorage.removeItem("hbf_admin_last_active");
-        await supabase.auth.signOut();
+      if (lastActive) {
+        const elapsed = Date.now() - parseInt(lastActive, 10);
+        if (elapsed > INACTIVITY_LIMIT) {
+          console.log("Inactivity limit reached, logging out...");
+          localStorage.removeItem("hbf_admin_last_active");
+          await supabase.auth.signOut();
+          return true; // Was logged out
+        }
       }
+      return false;
     };
 
     const resetTimer = () => {
@@ -63,26 +80,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // Check immediately on mount/session change
     checkInactivity();
+    // Only reset if we didn't just logout
     resetTimer();
 
     const events = ["mousemove", "keydown", "mousedown", "scroll", "touchstart"];
     
     let throttleTimer: NodeJS.Timeout | null = null;
-    const handleActivity = () => {
+    const handleActivity = async () => {
       if (throttleTimer) return;
+      
+      // IMPORTANT: Check if we SHOULD have been logged out BEFORE resetting the timer
+      const loggedOut = await checkInactivity();
+      if (loggedOut) return;
+
       throttleTimer = setTimeout(() => {
         resetTimer();
         throttleTimer = null;
-      }, 1000);
+      }, 2000); // Throttle to 2 seconds
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        checkInactivity();
+      }
     };
 
     events.forEach((event) => window.addEventListener(event, handleActivity));
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     // Check periodically
-    const intervalId = setInterval(checkInactivity, 60 * 1000);
+    const intervalId = setInterval(checkInactivity, 30 * 1000); // Check every 30 seconds
 
     return () => {
       events.forEach((event) => window.removeEventListener(event, handleActivity));
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
       clearInterval(intervalId);
       if (throttleTimer) clearTimeout(throttleTimer);
     };

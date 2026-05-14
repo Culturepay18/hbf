@@ -35,7 +35,8 @@ export function MissionVision() {
                   <div>
                     <h4 className="text-xl font-bold text-hbf-dark mb-2">Mission</h4>
                     <p className="text-hbf-muted leading-relaxed">
-                      Creating opportunities for students in Haiti through scholarships, sports, and youth programs to help them pursue their aspirations and transform the future of the country.
+                                            Haiti Bright Futures identifies high-performing students in northern Haiti and equips them with technology, mentorship, and real-world problem-solving experience to develop the next generation of civic and economic leaders. We invest in high-potential youth to remove barriers to education, empowering them to drive lasting, positive transformation through academic excellence and collaborative community action.
+
                     </p>
                   </div>
                 </div>
