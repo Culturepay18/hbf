@@ -50,8 +50,8 @@ export const blogPosts: BlogPost[] = [
 
 export const contact = {
   email: "info@hbfhaiti.org",
-  whatsapp: "+34 687 03 80 92",
-  whatsappUrl: "https://wa.me/34687038092",
+  whatsapp: "+1 (407) 408-6233",
+  whatsappUrl: "https://wa.me/14074086233",
   instagram: "@hbfhaiti",
   instagramUrl: "https://www.instagram.com/hbfhaiti/",
 };
@@ -162,7 +162,7 @@ export const impactStats = [
 
 export const socialLinks = [
   { label: "Instagram", href: "https://www.instagram.com/hbfhaiti/", platform: "instagram" },
-  { label: "WhatsApp", href: "https://wa.me/34687038092", platform: "whatsapp" },
+  { label: "WhatsApp", href: "https://wa.me/14074086233", platform: "whatsapp" },
 ];
 
 export const navLinks = [

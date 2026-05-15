@@ -14,11 +14,14 @@ export const metadata: Metadata = {
   title: "Haiti Bright Futures",
   description:
     "Haiti Bright Futures creates opportunities for students in Haiti through scholarships, sports, and youth development programs.",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "Haiti Bright Futures",
     description:
       "Building brighter futures for Haitian youth through scholarships, sports, and youth programs.",
-    url: "https://hbfhaiti.org",
+    url: "/",
     siteName: "Haiti Bright Futures",
     images: [
       {
